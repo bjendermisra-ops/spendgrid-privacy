@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en" oncontextmenu="return false;" ondragstart="return false;" onselectstart="return false;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Privacy Policy - SpendGrid : Budget & Wealth OS</title>
+    <style>
+        :root {
+            --bg: #FFFDF0;
+            --black: #000000;
+            --white: #FFFFFF;
+            --yellow: #FFE600;
+            --pink: #FF66C4;
+            --green: #00E599;
+            --cyan: #38BDF8;
+            --purple: #C084FC;
+            --text-main: #0F172A;
+            --text-muted: #475569;
+        }
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
+            -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;
+            -webkit-touch-callout: none;
+        }
+        html { font-size: clamp(15px, 2.5vw, 17px); }
+        body { background: var(--bg); color: var(--text-main); padding: clamp(14px, 3.5vw, 32px); line-height: 1.75; width: 100%; max-width: 820px; margin: 0 auto; overflow-x: hidden; }
+        .nb-card { background: var(--white); border: 3px solid var(--black); border-radius: clamp(16px, 3vw, 22px); box-shadow: 5px 5px 0px var(--black); padding: clamp(18px, 3.5vw, 28px); margin-bottom: 24px; }
+        .nb-tag { background: var(--black); color: #FFF; font-size: 11px; font-weight: 900; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block; margin-bottom: 8px; }
+        .top-bar { display: flex; align-items: center; justify-content: flex-start; gap: 14px; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 3px solid var(--black); }
+        .header-content { display: flex; align-items: center; gap: 14px; width: 100%; }
+        .logo-img { width: 56px; height: 56px; border-radius: 16px; border: 3px solid var(--black); box-shadow: 3px 3px 0px var(--black); object-fit: contain; background: #FFF; flex-shrink: 0; display: block; }
+        .header-titles h1 { font-size: clamp(20px, 4vw, 26px); font-weight: 900; letter-spacing: -0.5px; line-height: 1.2; }
+        .header-titles p { font-size: 12px; color: var(--text-muted); font-weight: 700; margin-top: 2px; }
+        .lang-chips-container { display: flex; gap: 8px; margin: 0 0 22px 0; background: var(--white); padding: 6px; border-radius: 16px; border: 3px solid var(--black); box-shadow: 4px 4px 0px var(--black); }
+        .lang-chip { flex: 1; text-align: center; padding: 10px 6px; font-size: 13px; font-weight: 900; border-radius: 10px; cursor: pointer; border: 2px solid transparent; color: var(--black); transition: all 0.1s ease; }
+        .lang-chip.active { background: var(--yellow); border-color: var(--black); box-shadow: 2px 2px 0px var(--black); }
+        h2 { font-size: clamp(17px, 3.5vw, 21px); font-weight: 900; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        h3 { font-size: 15px; font-weight: 900; margin: 16px 0 6px 0; color: #0F172A; }
+        p, li { font-size: clamp(14px, 2.5vw, 15.5px); color: #334155; font-weight: 600; line-height: 1.75; }
+        ul { padding-left: 20px; margin-bottom: 12px; }
+        li { margin-bottom: 8px; }
+        .perm-box { background: #FAFAFA; border: 2.5px solid var(--black); border-radius: 14px; padding: 16px; margin-bottom: 14px; box-shadow: 3px 3px 0px var(--black); }
+        .perm-title { font-size: 14px; font-weight: 900; color: var(--black); display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 4px; }
+        .perm-badge { font-size: 10px; font-weight: 900; background: var(--yellow); border: 1.5px solid var(--black); padding: 2px 8px; border-radius: 12px; }
+        .faq-item { background: #FFF; border: 2px solid var(--black); border-radius: 14px; padding: 14px; margin-bottom: 10px; box-shadow: 3px 3px 0px var(--black); }
+        .faq-q { font-size: 14px; font-weight: 900; color: var(--black); margin-bottom: 6px; }
+        .faq-a { font-size: 13px; color: #475569; font-weight: 600; line-height: 1.6; }
+        .banner-safe { background: #E8FFF6; border-left: 6px solid var(--green); }
+        .banner-warning { background: #FFF0F5; border-left: 6px solid var(--pink); }
+        .dev-card { background: var(--black); color: #FFF; border: 3px solid var(--black); border-radius: 20px; padding: 22px; margin-bottom: 24px; box-shadow: 6px 6px 0px var(--yellow); }
+        .dev-card p, .dev-card li { color: #CBD5E1; }
+        .footer { text-align: center; font-size: 12px; font-weight: 800; color: var(--text-muted); margin-top: 28px; padding-bottom: 24px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="top-bar">
+            <div class="header-content">
+                <img src="https://res.cloudinary.com/eonnwv4w/image/upload/v1787422701/20260820_151203_0000.png" alt="SpendGrid Logo" class="logo-img" onerror="this.onerror=null; this.src=''; this.alt='🛡️'; this.style.fontSize='30px'; this.style.display='flex'; this.style.alignItems='center'; this.style.justifyContent='center';">
+                <div class="header-titles">
+                    <h1 data-key="header_title">Privacy Policy & Data Safety</h1>
+                    <p data-key="header_subtitle">SpendGrid : Budget & Wealth OS • v1.0.0 (Production)</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="lang-chips-container">
+            <div class="lang-chip active" id="chip-en" onclick="setLanguage('en')">🇬🇧 English</div>
+            <div class="lang-chip" id="chip-hi" onclick="setLanguage('hi')">🇮🇳 हिन्दी</div>
+            <div class="lang-chip" id="chip-mr" onclick="setLanguage('mr')">🚩 मराठी</div>
+        </div>
+
+        <!-- EFFECTIVE DATE & PLAY STORE COMPLIANCE BANNER -->
+        <div style="background:#FFF; border:2px solid var(--black); border-radius:12px; padding:10px 14px; margin-bottom:18px; font-size:12px; font-weight:800; display:flex; justify-content:space-between; align-items:center; box-shadow:3px 3px 0px var(--black);">
+            <span>📅 <span data-key="meta_effective">Effective Date:</span> August 2026</span>
+            <span class="nb-tag" style="margin-bottom:0;" data-key="meta_status">PLAY STORE COMPLIANT</span>
+        </div>
+
+        <div class="nb-card banner-safe">
+            <span class="nb-tag" style="background:var(--green); color:#000;" data-key="badge_pledge">100% LOCAL & ON-DEVICE PRIVACY PLEDGE</span>
+            <p style="margin-top:6px; font-size:15px; color:#0F172A; font-weight:700;" data-key="intro_pledge">
+                SpendGrid : Budget & Wealth OS is engineered as a zero-cloud, 100% offline personal finance utility. We do not own remote servers, we do not require account logins, and your sensitive financial transactions never leave your smartphone hardware.
+            </p>
+        </div>
+
+        <div class="nb-card">
+            <h2>🎯 <span data-key="sec1_title">1. Core Application Identity & Purpose</span></h2>
+            <p data-key="sec1_desc1">SpendGrid is an on-device personal financial management (PFM) application designed to help users track expenses, manage cashflow, organize personal budgets, and identify financial trends without exposing their data to external cloud services.</p>
+            <p style="margin-top:8px;" data-key="sec1_desc2">We operate strictly on a <b>"No-Account, No-Telemetry, Zero-Tracking"</b> architecture. We believe personal financial privacy is a fundamental human right.</p>
+        </div>
+
+        <div class="nb-card">
+            <h2>📱 <span data-key="sec2_title">2. Requested Device Permissions & Exact Technical Reasons</span></h2>
+            <p style="margin-bottom:14px;" data-key="sec2_desc">In strict compliance with Google Play Developer Policies and Financial Data Guidelines, SpendGrid requests only the minimum permissions required for automated on-device bookkeeping:</p>
+
+            <div class="perm-box">
+                <div class="perm-title">
+                    <span data-key="p_sms_title">A. SMS Access (READ_SMS & RECEIVE_SMS)</span>
+                    <span class="perm-badge" data-key="p_sms_badge">Financial Management</span>
+                </div>
+                <div class="perm-why">
+                    <ul>
+                        <li data-key="p_sms_l1"><b>Core Functional Purpose:</b> To read incoming verified bank debit and credit text messages (e.g., HDFC, SBI, ICICI, Axis, Jio Payments, Slice, Sadhana Bank) to automatically log your transactions without manual typing.</li>
+                        <li data-key="p_sms_l2"><b>Scope of Data Read:</b> Only messages containing verified institutional bank headers, masked account digits (e.g. <i>x1185, XX8619</i>), and financial transaction amounts are parsed.</li>
+                        <li data-key="p_sms_l3"><b>Strictly Excluded:</b> Personal chats, family messages, social media OTPs, passwords, and marketing spam are 100% ignored and discarded instantly.</li>
+                        <li data-key="p_sms_l4"><b>On-Device Processing:</b> All text parsing occurs client-side using local regular expressions (Regex). Zero SMS contents are ever transmitted over the network.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="perm-box">
+                <div class="perm-title">
+                    <span data-key="p_notif_title">B. Notification Access (BIND_NOTIFICATION_LISTENER_SERVICE)</span>
+                    <span class="perm-badge" data-key="p_notif_badge">Real-Time Auto-Sync</span>
+                </div>
+                <div class="perm-why">
+                    <ul>
+                        <li data-key="p_notif_l1"><b>Core Functional Purpose:</b> When financial institutions or UPI apps (Google Pay, PhonePe, Paytm, JioFinance, CRED, Chase, Revolut, Monzo) do not send an SMS for micro-payments (e.g., ₹10 chai or $2 transit), this listener captures the live push alert in 0.01 seconds.</li>
+                        <li data-key="p_notif_l2"><b>Scope:</b> Only payment confirmation notifications containing monetary amounts and transaction verbs are processed. Messaging and social apps are strictly ignored.</li>
+                        <li data-key="p_notif_l3"><b>Zero Background Transmission:</b> Captured notification titles and bodies are stored solely in your local device storage.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="perm-box">
+                <div class="perm-title">
+                    <span data-key="p_mic_title">C. Microphone Access (RECORD_AUDIO) [Optional]</span>
+                    <span class="perm-badge" data-key="p_mic_badge">Voice Command Logger</span>
+                </div>
+                <div class="perm-why">
+                    <ul>
+                        <li data-key="p_mic_l1"><b>Purpose:</b> Used exclusively when you tap the floating Mic button to speak a quick expense (e.g. <i>"Twenty rupees auto cash"</i>).</li>
+                        <li data-key="p_mic_l2"><b>Processing:</b> Converted to text in real-time using Android's native on-device SpeechRecognizer. <b>No audio is recorded, saved, or uploaded.</b></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="perm-box">
+                <div class="perm-title">
+                    <span data-key="p_storage_title">D. Scoped Media Storage (Android MediaStore API)</span>
+                    <span class="perm-badge" data-key="p_storage_badge">Export Backup & PDF</span>
+                </div>
+                <div class="perm-why">
+                    <ul>
+                        <li data-key="p_storage_l1"><b>Purpose:</b> Allows you to export your data as a <code>.CSV</code> backup or generate an official <code>.PDF</code> statement saved directly in your device's <code>Download/SpendGrid/</code> folder.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="perm-box">
+                <div class="perm-title">
+                    <span data-key="p_vib_title">E. Haptic Feedback (VIBRATE)</span>
+                    <span class="perm-badge" data-key="p_vib_badge">Tactile UI</span>
+                </div>
+                <div class="perm-why">
+                    <ul>
+                        <li data-key="p_vib_l1"><b>Purpose:</b> Triggers subtle 25ms tactile haptic clicks when buttons are pressed for an authentic native experience.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="nb-card">
+            <h2>🛡️ <span data-key="sec3_title">3. What We Access vs What We NEVER Access</span></h2>
+            <div style="background:#FFF0F5; border:2px solid var(--black); border-radius:12px; padding:14px; margin-bottom:12px;">
+                <b style="color:#D90429;" data-key="sec3_never_title">🚫 What SpendGrid NEVER Touches:</b>
+                <ul style="margin-top:6px; margin-bottom:0;">
+                    <li data-key="sec3_never_l1">We NEVER read your personal WhatsApp, Telegram, or SMS conversations.</li>
+                    <li data-key="sec3_never_l2">We NEVER capture or store banking passwords, UPI PINs, CVV codes, or full card numbers.</li>
+                    <li data-key="sec3_never_l3">We NEVER upload your contacts, photos, or location data.</li>
+                </ul>
+            </div>
+            <div style="background:#E8FFF6; border:2px solid var(--black); border-radius:12px; padding:14px;">
+                <b style="color:#00875A;" data-key="sec3_yes_title">✅ What SpendGrid Reads Strictly:</b>
+                <ul style="margin-top:6px; margin-bottom:0;">
+                    <li data-key="sec3_yes_l1">Financial transaction debit & credit amounts.</li>
+                    <li data-key="sec3_yes_l2">Merchant / Beneficiary names (e.g. Swiggy, Uber, Amazon, JioFinance).</li>
+                    <li data-key="sec3_yes_l3">12-Digit NPCI UTR / Reference numbers to prevent duplicate entries.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 📢 SECTION: THIRD-PARTY ADS DISCLOSURE -->
+        <div class="nb-card" style="background:#F3E8FF; border-left:6px solid var(--purple);">
+            <h2>📢 <span data-key="sec_ads_title">4. Third-Party Advertising & Ad Networks</span></h2>
+            <p style="margin-bottom:8px;" data-key="sec_ads_desc1">To keep SpendGrid free for all users, we may display third-party advertisements served by verified ad networks (such as <b>Google AdMob</b>).</p>
+            <ul>
+                <li data-key="sec_ads_l1"><b>Standard Identifiers:</b> Ad networks may collect standard device identifiers (such as Google Advertising ID / AAID) and coarse diagnostics to serve relevant ads in compliance with Google Play Developer Policies.</li>
+                <li data-key="sec_ads_l2"><b>Zero Financial Data Sharing:</b> Advertising partners have <b>ZERO ACCESS</b> to your bank SMS, UPI logs, account balances, or financial records. Your financial ledger is strictly sandboxed on your device hardware.</li>
+            </ul>
+        </div>
+
+        <div class="nb-card banner-warning">
+            <span class="nb-tag" style="background:var(--pink); color:#000;" data-key="badge_warning">STRICT ZERO DATA-SELLING PLEDGE</span>
+            <p style="margin-top:6px; font-size:14.5px; font-weight:700;" data-key="warning_text">
+                We do not sell, rent, monetize, trade, or transfer your personal or financial data to telemarketers, loan companies, data brokers, credit bureaus, or advertising networks. Your data remains strictly isolated inside Android's private app sandbox.
+            </p>
+        </div>
+
+        <div class="nb-card">
+            <h2>🗑️ <span data-key="sec7_title">5. User Sovereignty & Complete Data Deletion</span></h2>
+            <p data-key="sec7_desc">You retain 100% control over all information logged inside the application:</p>
+            <ul>
+                <li data-key="sec7_l1"><b>Individual Deletion:</b> You can delete any single transaction or multiple selected transactions anytime with 1-click.</li>
+                <li data-key="sec7_l2"><b>Flag & Block Senders:</b> You can permanently block specific unwanted sender IDs directly from the transaction inspector.</li>
+                <li data-key="sec7_l3"><b>Permanent Factory Reset:</b> Tapping <b>"Clear All Data & Reset"</b> in Settings permanently and irreversibly erases all records from local storage.</li>
+                <li data-key="sec7_l4"><b>Uninstallation:</b> Uninstalling the application completely removes all local database files from your device.</li>
+            </ul>
+        </div>
+
+        <!-- 👶 COPPA & CHILDREN'S PRIVACY -->
+        <div class="nb-card">
+            <h2>👶 <span data-key="sec_child_title">6. Children's Privacy (COPPA Compliance)</span></h2>
+            <p data-key="sec_child_desc">SpendGrid : Budget & Wealth OS is intended strictly for individuals aged 18 and older. We do not knowingly collect, parse, or process personal or financial data from children under the age of 13 (or under 16 in certain jurisdictions).</p>
+        </div>
+
+        <div class="nb-card">
+            <h2>❓ <span data-key="sec11_title">7. Frequently Asked Questions (Security FAQs)</span></h2>
+            <div class="faq-item">
+                <div class="faq-q"><span>🔒</span> <span data-key="faq1_q">Can SpendGrid read my banking OTPs?</span></div>
+                <div class="faq-a" data-key="faq1_a"><b>No.</b> SpendGrid's on-device regex engine matches only financial debit/credit records and automatically discards one-time passwords (OTPs) and personal messages.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q"><span>📱</span> <span data-key="faq2_q">Does SpendGrid upload my bank transactions to any server?</span></div>
+                <div class="faq-a" data-key="faq2_a"><b>No.</b> SpendGrid does not own or connect to any cloud server. All records are saved exclusively in your phone's internal storage.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q"><span>💾</span> <span data-key="faq3_q">How do I backup my data when changing phones?</span></div>
+                <div class="faq-a" data-key="faq3_a">Go to <b>Settings ➔ Export Backup (.CSV)</b>. The file will be saved directly into your <code>Download/SpendGrid/</code> folder, which you can easily transfer to your new phone.</div>
+            </div>
+        </div>
+
+        <div class="dev-card">
+            <span class="nb-tag" style="background:var(--yellow); color:#000;" data-key="dev_tag">TECHNICAL ENGINEERING TEAM</span>
+            <h2 style="font-size:20px; font-weight:900; margin:8px 0;" data-key="dev_name">SpendGrid Core Team</h2>
+            <p style="font-size:13.5px; line-height:1.65; margin-bottom:14px;" data-key="dev_desc">
+                Designed, developed, and maintained by our dedicated technical developer (Santosh) and team to provide an ultra-secure, automated, and 100% on-device personal financial OS for users globally.
+            </p>
+            <div style="font-size:13px;">
+                <span data-key="dev_contact_label">For privacy inquiries, data deletion requests, or support:</span><br>
+                <a href="mailto:spendgridosofficial@gmail.com" style="color:var(--yellow); font-weight:900; text-decoration:underline;">spendgridosofficial@gmail.com</a>
+            </div>
+        </div>
+
+        <div class="footer" data-key="footer_text">
+            SpendGrid : Budget & Wealth OS • 100% On-Device Financial OS<br>
+            © 2026 SpendGrid. All rights reserved.
+        </div>
+    </div>
+
+    <script>
+        let memoryStore = {};
+        function safeGetItem(key, fallback) {
+            try {
+                let val = localStorage.getItem(key);
+                return val ? val : (memoryStore[key] || fallback);
+            } catch(e) {
+                return memoryStore[key] || fallback;
+            }
+        }
+        function safeSetItem(key, value) {
+            memoryStore[key] = value;
+            try { localStorage.setItem(key, value); } catch(e) {}
+        }
+
+        const langData = {
+            "en": {
+                "header_title": "Privacy Policy & Data Safety",
+                "header_subtitle": "SpendGrid : Budget & Wealth OS • v1.0.0 (Production)",
+                "meta_effective": "Effective Date:",
+                "meta_status": "PLAY STORE COMPLIANT",
+                "badge_pledge": "100% LOCAL & ON-DEVICE PRIVACY PLEDGE",
+                "intro_pledge": "SpendGrid : Budget & Wealth OS is engineered as a zero-cloud, 100% offline personal finance utility. We do not own remote servers, we do not require account logins, and your sensitive financial transactions never leave your smartphone hardware.",
+                "sec1_title": "1. Core Application Identity & Purpose",
+                "sec1_desc1": "SpendGrid is an on-device personal financial management (PFM) application designed to help users track expenses, manage cashflow, organize personal budgets, and identify financial trends without exposing their data to external cloud services.",
+                "sec1_desc2": "We operate strictly on a <b>\"No-Account, No-Telemetry, Zero-Tracking\"</b> architecture. We believe personal financial privacy is a fundamental human right.",
+                "sec2_title": "2. Requested Device Permissions & Exact Technical Reasons",
+                "sec2_desc": "In strict compliance with Google Play Developer Policies and Financial Data Guidelines, SpendGrid requests only the minimum permissions required for automated on-device bookkeeping:",
+                "p_sms_title": "A. SMS Access (READ_SMS & RECEIVE_SMS)",
+                "p_sms_badge": "Financial Management",
+                "p_sms_l1": "<b>Core Functional Purpose:</b> To read incoming verified bank debit and credit text messages (e.g., HDFC, SBI, ICICI, Axis, Jio Payments, Slice, Sadhana Bank) to automatically log your transactions without manual typing.",
+                "p_sms_l2": "<b>Scope of Data Read:</b> Only messages containing verified institutional bank headers, masked account digits (e.g. <i>x1185, XX8619</i>), and financial transaction amounts are parsed.",
+                "p_sms_l3": "<b>Strictly Excluded:</b> Personal chats, family messages, social media OTPs, passwords, and marketing spam are 100% ignored and discarded instantly.",
+                "p_sms_l4": "<b>On-Device Processing:</b> All text parsing occurs client-side using local regular expressions (Regex). Zero SMS contents are ever transmitted over the network.",
+                "p_notif_title": "B. Notification Access (BIND_NOTIFICATION_LISTENER_SERVICE)",
+                "p_notif_badge": "Real-Time Auto-Sync",
+                "p_notif_l1": "<b>Core Functional Purpose:</b> When financial institutions or UPI apps (Google Pay, PhonePe, Paytm, JioFinance, CRED, Chase, Revolut, Monzo) do not send an SMS for micro-payments (e.g., ₹10 chai or $2 transit), this listener captures the live push alert in 0.01 seconds.",
+                "p_notif_l2": "<b>Scope:</b> Only payment confirmation notifications containing monetary amounts and transaction verbs are processed. Messaging and social apps are strictly ignored.",
+                "p_notif_l3": "<b>Zero Background Transmission:</b> Captured notification titles and bodies are stored solely in your local device storage.",
+                "p_mic_title": "C. Microphone Access (RECORD_AUDIO) [Optional]",
+                "p_mic_badge": "Voice Command Logger",
+                "p_mic_l1": "<b>Purpose:</b> Used exclusively when you tap the floating Mic button to speak a quick expense (e.g. <i>\"Twenty rupees auto cash\"</i>).",
+                "p_mic_l2": "<b>Processing:</b> Converted to text in real-time using Android's native on-device SpeechRecognizer. <b>No audio is recorded, saved, or uploaded.</b>",
+                "p_storage_title": "D. Scoped Media Storage (Android MediaStore API)",
+                "p_storage_badge": "Export Backup & PDF",
+                "p_storage_l1": "<b>Purpose:</b> Allows you to export your data as a <code>.CSV</code> backup or generate an official <code>.PDF</code> statement saved directly in your device's <code>Download/SpendGrid/</code> folder.",
+                "p_vib_title": "E. Haptic Feedback (VIBRATE)",
+                "p_vib_badge": "Tactile UI",
+                "p_vib_l1": "<b>Purpose:</b> Triggers subtle 25ms tactile haptic clicks when buttons are pressed for an authentic native experience.",
+                "sec3_title": "3. What We Access vs What We NEVER Access",
+                "sec3_never_title": "🚫 What SpendGrid NEVER Touches:",
+                "sec3_never_l1": "We NEVER read your personal WhatsApp, Telegram, or SMS conversations.",
+                "sec3_never_l2": "We NEVER capture or store banking passwords, UPI PINs, CVV codes, or full card numbers.",
+                "sec3_never_l3": "We NEVER upload your contacts, photos, or location data.",
+                "sec3_yes_title": "✅ What SpendGrid Reads Strictly:",
+                "sec3_yes_l1": "Financial transaction debit & credit amounts.",
+                "sec3_yes_l2": "Merchant / Beneficiary names (e.g. Swiggy, Uber, Amazon, JioFinance).",
+                "sec3_yes_l3": "12-Digit NPCI UTR / Reference numbers to prevent duplicate entries.",
+                "sec_ads_title": "4. Third-Party Advertising & Ad Networks",
+                "sec_ads_desc1": "To keep SpendGrid free for all users, we may display third-party advertisements served by verified ad networks (such as <b>Google AdMob</b>).",
+                "sec_ads_l1": "<b>Standard Identifiers:</b> Ad networks may collect standard device identifiers (such as Google Advertising ID / AAID) and coarse diagnostics to serve relevant ads in compliance with Google Play Developer Policies.",
+                "sec_ads_l2": "<b>Zero Financial Data Sharing:</b> Advertising partners have <b>ZERO ACCESS</b> to your bank SMS, UPI logs, account balances, or financial records. Your financial ledger is strictly sandboxed on your device hardware.",
+                "badge_warning": "STRICT ZERO DATA-SELLING PLEDGE",
+                "warning_text": "We do not sell, rent, monetize, trade, or transfer your personal or financial data to telemarketers, loan companies, data brokers, credit bureaus, or advertising networks. Your data remains strictly isolated inside Android's private app sandbox.",
+                "sec7_title": "5. User Sovereignty & Complete Data Deletion",
+                "sec7_desc": "You retain 100% control over all information logged inside the application:",
+                "sec7_l1": "<b>Individual Deletion:</b> You can delete any single transaction or multiple selected transactions anytime with 1-click.",
+                "sec7_l2": "<b>Flag & Block Senders:</b> You can permanently block specific unwanted sender IDs directly from the transaction inspector.",
+                "sec7_l3": "<b>Permanent Factory Reset:</b> Tapping <b>\"Clear All Data & Reset\"</b> in Settings permanently and irreversibly erases all records from local storage.",
+                "sec7_l4": "<b>Uninstallation:</b> Uninstalling the application completely removes all local database files from your device.",
+                "sec_child_title": "6. Children's Privacy (COPPA Compliance)",
+                "sec_child_desc": "SpendGrid : Budget & Wealth OS is intended strictly for individuals aged 18 and older. We do not knowingly collect, parse, or process personal or financial data from children under the age of 13 (or under 16 in certain jurisdictions).",
+                "sec11_title": "7. Frequently Asked Questions (Security FAQs)",
+                "faq1_q": "Can SpendGrid read my banking OTPs?",
+                "faq1_a": "<b>No.</b> SpendGrid's on-device regex engine matches only financial debit/credit records and automatically discards one-time passwords (OTPs) and personal messages.",
+                "faq2_q": "Does SpendGrid upload my bank transactions to any server?",
+                "faq2_a": "<b>No.</b> SpendGrid does not own or connect to any cloud server. All records are saved exclusively in your phone's internal storage.",
+                "faq3_q": "How do I backup my data when changing phones?",
+                "faq3_a": "Go to <b>Settings ➔ Export Backup (.CSV)</b>. The file will be saved directly into your <code>Download/SpendGrid/</code> folder, which you can easily transfer to your new phone.",
+                "dev_tag": "TECHNICAL ENGINEERING TEAM",
+                "dev_name": "SpendGrid Core Team",
+                "dev_desc": "Designed, developed, and maintained by our dedicated technical developer (Santosh) and team to provide an ultra-secure, automated, and 100% on-device personal financial OS for users globally.",
+                "dev_contact_label": "For privacy inquiries, data deletion requests, or support:",
+                "footer_text": "SpendGrid : Budget & Wealth OS • 100% On-Device Financial OS<br>© 2026 SpendGrid. All rights reserved."
+            },
+            "hi": {
+                "header_title": "गोपनीयता नीति और डेटा सुरक्षा",
+                "header_subtitle": "SpendGrid : बजट और वेल्थ OS • v1.0.0 (उत्पादन)",
+                "meta_effective": "प्रभावी तिथि:",
+                "meta_status": "प्ले स्टोर अनुपालन",
+                "badge_pledge": "१००% स्थानीय और डिवाइस पर गोपनीयता का वादा",
+                "intro_pledge": "SpendGrid : बजट और वेल्थ OS पूरी तरह से शून्य-क्लाउड, १००% ऑफ़लाइन व्यक्तिगत वित्त उपकरण के रूप में बनाया गया है। हमारे पास कोई रिमोट सर्वर नहीं है, हम लॉगिन नहीं मांगते हैं, और आपका संवेदनशील वित्तीय डेटा आपके फ़ोन से बाहर कभी नहीं जाता है।",
+                "sec1_title": "१. मुख्य एप्लिकेशन पहचान और उद्देश्य",
+                "sec1_desc1": "SpendGrid एक ऑन-डिवाइस व्यक्तिगत वित्तीय प्रबंधन (PFM) एप्लिकेशन है जो उपयोगकर्ताओं को अपने डेटा को बाहरी क्लाउड सेवाओं के संपर्क में लाए बिना खर्चों को ट्रैक करने और बजट प्रबंधित करने में मदद करता है।",
+                "sec1_desc2": "हम पूरी तरह से <b>\"नो-अकाउंट, नो-टेलीमेट्री, जीरो-ट्रैकिंग\"</b> मॉडल पर काम करते हैं। हम मानते हैं कि व्यक्तिगत वित्तीय गोपनीयता एक मौलिक अधिकार है।",
+                "sec2_title": "२. अनुरोधित अनुमतियाँ और सटीक तकनीकी कारण",
+                "sec2_desc": "गूगल प्ले डेवलपर नीतियों और वित्तीय डेटा दिशानिर्देशों के सख्त अनुपालन में, SpendGrid केवल न्यूनतम अनुमतियों का अनुरोध करता है:",
+                "p_sms_title": "ए. एसएमएस एक्सेस (READ_SMS और RECEIVE_SMS)",
+                "p_sms_badge": "वित्तीय प्रबंधन",
+                "p_sms_l1": "<b>मुख्य उद्देश्य:</b> बैंक डेबिट और क्रेडिट संदेशों (जैसे HDFC, SBI, ICICI, Axis, Jio Payments, Slice, Sadhana Bank) को स्वतः पढ़कर बिना टाइप किए खर्चों को जोड़ना।",
+                "p_sms_l2": "<b>पढ़ा गया डेटा:</b> केवल आधिकारिक बैंक संदेश, अंतिम खाता नंबर (जैसे <i>x1185, XX8619</i>), और लेनदेन राशि।",
+                "p_sms_l3": "<b>पूरी तरह से बाहर:</b> व्यक्तिगत चैट, पारिवारिक संदेश, प्रचार लिंक, ओटीपी और टेलीकॉम विज्ञापनों को १००% छोड़ दिया जाता है।",
+                "p_sms_l4": "<b>डिवाइस पर प्रसंस्करण:</b> १००% डिवाइस के अंदर लोकल पैटर्न मिलान। कोई एसएमएस डेटा अपलोड या साझा नहीं किया जाता है।",
+                "p_notif_title": "बी. नोटिफिकेशन एक्सेस (BIND_NOTIFICATION_LISTENER_SERVICE)",
+                "p_notif_badge": "रीयल-टाइम ऑटो-सिंक",
+                "p_notif_l1": "<b>मुख्य उद्देश्य:</b> जब बैंक छोटे लेनदेन के लिए एसएमएस नहीं भेजते, तब यूपीआई गेटवे (GPay, PhonePe, Paytm, JioFinance, CRED) से रीयल-टाइम भुगतान अलर्ट कैप्चर करना।",
+                "p_notif_l2": "<b>दायरा:</b> केवल भुगतान पुष्टि वाले वित्तीय अलर्ट संसाधित होते हैं। अन्य ऐप्स को नजरअंदाज किया जाता है।",
+                "p_notif_l3": "<b>शून्य बैकग्राउंड ट्रांसमिशन:</b> कैप्चर किए गए नोटिफिकेशन केवल आपके डिवाइस स्टोरेज में रहते हैं।",
+                "p_mic_title": "सी. माइक्रोफ़ोन एक्सेस (RECORD_AUDIO) [वैकल्पिक]",
+                "p_mic_badge": "वॉइस कमांड लॉगर",
+                "p_mic_l1": "<b>उद्देश्य:</b> केवल तब उपयोग किया जाता है जब आप बोलकर खर्च जोड़ने के लिए माइक बटन दबाते हैं (उदा. <i>\"बीस रुपये ऑटो कैश\"</i>)।",
+                "p_mic_l2": "<b>प्रसंस्करण:</b> एंड्रॉइड के स्थानीय स्पीच इंजन द्वारा टेक्स्ट में बदला जाता है। कोई ऑडियो रिकॉर्डिंग सहेजी या भेजी नहीं जाती है।",
+                "p_storage_title": "डी. स्टोरेज एक्सेस (MediaStore API)",
+                "p_storage_badge": "बैकअप और पीडीएफ निर्यात",
+                "p_storage_l1": "<b>उद्देश्य:</b> आपको <code>.CSV</code> बैकअप या <code>.PDF</code> स्टेटमेंट सीधे अपने <code>Download/SpendGrid/</code> फ़ोल्डर में सहेजने की अनुमति देता है।",
+                "p_vib_title": "ई. हैप्टिक फीडबैक (VIBRATE)",
+                "p_vib_badge": "टैक्टाइल यूआई",
+                "p_vib_l1": "<b>उद्देश्य:</b> बटन दबाने पर २५ मिलीसेकंड का सूक्ष्म कंपन प्रदान करता है।",
+                "sec3_title": "३. हम क्या एक्सेस करते हैं बनाम हम क्या कभी नहीं छूते",
+                "sec3_never_title": "🚫 SpendGrid जिसे कभी नहीं छूता:",
+                "sec3_never_l1": "हम आपके व्यक्तिगत व्हाट्सएप, टेलीग्राम या एसएमएस संदेशों को कभी नहीं पढ़ते हैं।",
+                "sec3_never_l2": "हम बैंकिंग पासवर्ड, यूपीआई पिन, सीवीवी या पूरे कार्ड नंबर कभी कैप्चर या स्टोर नहीं करते हैं।",
+                "sec3_never_l3": "हम आपके संपर्क, फोटो या स्थान डेटा को कभी अपलोड नहीं करते हैं।",
+                "sec3_yes_title": "✅ SpendGrid जिसे सख्ती से पढ़ता है:",
+                "sec3_yes_l1": "वित्तीय लेनदेन डेबिट और क्रेडिट राशि।",
+                "sec3_yes_l2": "व्यापारी / प्राप्तकर्ता का नाम (उदा. Swiggy, Uber, Amazon, JioFinance)।",
+                "sec3_yes_l3": "डुप्लिकेट प्रविष्टियों को रोकने के लिए १२-अंकीय NPCI UTR / संदर्भ संख्या।",
+                "sec_ads_title": "४. तृतीय-पक्ष विज्ञापन और विज्ञापन नेटवर्क",
+                "sec_ads_desc1": "SpendGrid को सभी उपयोगकर्ताओं के लिए मुफ़्त रखने हेतु, हम सत्यापित विज्ञापन नेटवर्क (जैसे <b>Google AdMob</b>) द्वारा प्रदान किए गए विज्ञापन प्रदर्शित कर सकते हैं।",
+                "sec_ads_l1": "<b>मानक पहचानकर्ता:</b> विज्ञापन नेटवर्क Google Play डेवलपर नीतियों के अनुसार प्रासंगिक विज्ञापन दिखाने के लिए मानक डिवाइस पहचानकर्ता (जैसे Google Advertising ID / AAID) का उपयोग कर सकते हैं।",
+                "sec_ads_l2": "<b>शून्य वित्तीय डेटा साझाकरण:</b> विज्ञापन नेटवर्क को आपके बैंक संदेशों, यूपीआई रिकॉर्ड या वित्तीय डेटा की <b>०% एक्सेस</b> है। आपका वित्तीय डेटा पूरी तरह आपके फ़ोन में सुरक्षित है।",
+                "badge_warning": "सख्त शून्य डेटा-बिक्री की गारंटी",
+                "warning_text": "हम आपका व्यक्तिगत या वित्तीय डेटा टेलीमार्केटर्स, लोन कंपनियों, डेटा दलालों, या विज्ञापन नेटवर्क को कभी नहीं बेचते, किराए पर नहीं देते या स्थानांतरित नहीं करते हैं। आपका डेटा एंड्रॉइड के निजी ऐप सैंडबॉक्स में सुरक्षित रहता है।",
+                "sec7_title": "५. उपयोगकर्ता संप्रभुता और पूर्ण डेटा विलोपन",
+                "sec7_desc": "आपके डेटा पर हमेशा आपका १००% नियंत्रण रहता है:",
+                "sec7_l1": "<b>व्यक्तिगत विलोपन:</b> आप किसी भी एक या कई लेनदेन को कभी भी १-क्लिक में हटा सकते हैं।",
+                "sec7_l2": "<b>सेंडर ब्लॉक करें:</b> आप अवांछित संदेश भेजने वालों को सीधे ब्लॉक कर सकते हैं।",
+                "sec7_l3": "<b>फ़ैक्टरी रीसेट:</b> सेटिंग्स में <b>\"डेटा हटाएं और रीसेट करें\"</b> दबाने से आपके डिवाइस से सभी रिकॉर्ड हमेशा के लिए मिट जाते हैं।",
+                "sec7_l4": "<b>अनइंस्टॉल:</b> ऐप को अनइंस्टॉल करने से आपके फोन से सभी स्थानीय डेटाबेस फ़ाइलें पूरी तरह से हट जाती हैं।",
+                "sec_child_title": "६. बच्चों की गोपनीयता (COPPA अनुपालन)",
+                "sec_child_desc": "SpendGrid : बजट और वेल्थ OS केवल १८ वर्ष और उससे अधिक आयु के व्यक्तियों के लिए है। हम जानबूझकर १३ वर्ष से कम आयु के बच्चों का कोई डेटा एकत्र या संसाधित नहीं करते हैं।",
+                "sec11_title": "७. अक्सर पूछे जाने वाले प्रश्न (सुरक्षा FAQ)",
+                "faq1_q": "क्या SpendGrid मेरे बैंकिंग ओटीपी पढ़ सकता है?",
+                "faq1_a": "<b>नहीं।</b> SpendGrid का इंजन केवल वित्तीय डेबिट/क्रेडिट रिकॉर्ड को पहचानता है और ओटीपी (OTP) को स्वचालित रूप से छोड़ देता है।",
+                "faq2_q": "क्या SpendGrid मेरे बैंक लेनदेन को किसी सर्वर पर अपलोड करता है?",
+                "faq2_a": "<b>नहीं।</b> SpendGrid किसी क्लाउड सर्वर से कनेक्ट नहीं होता। सभी रिकॉर्ड आपके फ़ोन के स्टोरेज में रहते हैं।",
+                "faq3_q": "फ़ोन बदलते समय मैं अपने डेटा का बैकअप कैसे लूँ?",
+                "faq3_a": "<b>सेटिंग्स ➔ बैकअप निर्यात (.CSV)</b> पर जाएं। फ़ाइल सीधे आपके <code>Download/SpendGrid/</code> फ़ोल्डर में सहेजी जाएगी।",
+                "dev_tag": "तकनीकी इंजीनियरिंग टीम",
+                "dev_name": "SpendGrid कोर टीम",
+                "dev_desc": "दुनिया भर के उपयोगकर्ताओं के लिए एक सुरक्षित, स्वचालित और १००% ऑन-डिवाइस व्यक्तिगत वित्तीय OS प्रदान करने के लिए हमारे समर्पित डेवलपर (संतोष) और टीम द्वारा डिज़ाइन और अनुरक्षित।",
+                "dev_contact_label": "गोपनीयता पूछताछ, डेटा हटाने के अनुरोध या सहायता के लिए संपर्क करें:",
+                "footer_text": "SpendGrid : बजट और वेल्थ OS • १००% ऑन-डिवाइस वित्तीय OS<br>© २०२६ SpendGrid. सर्वाधिकार सुरक्षित।"
+            },
+            "mr": {
+                "header_title": "गोपनीयता धोरण आणि डेटा सुरक्षा",
+                "header_subtitle": "SpendGrid : बजेट आणि वेल्थ OS • v1.0.0 (उत्पादन)",
+                "meta_effective": "प्रभावी तारीख:",
+                "meta_status": "प्ले स्टोअर अनुपालन",
+                "badge_pledge": "१००% स्थानिक आणि डिव्हाइसवर सुरक्षिततेची हमी",
+                "intro_pledge": "SpendGrid : बजेट आणि वेल्थ OS कोणत्याही क्लाउड सर्व्हरशिवाय तयार केले आहे. आमच्याकडे कोणतेही रिमोट सर्व्हर नाहीत, आम्ही लॉगिन मागत नाही आणि तुमचा संवेदनशील आर्थिक डेटा तुमच्या फोनमधून कधीही बाहेर जात नाही.",
+                "sec1_title": "१. मुख्य ॲप्लिकेशन ओळख आणि उद्देश",
+                "sec1_desc1": "SpendGrid हे वापरकर्त्यांना बाह्य क्लाउड सेवांसमोर डेटा उघड न करता खर्च ट्रॅक करण्यास आणि बजेट व्यवस्थापित करण्यास मदत करण्यासाठी डिझाइन केलेले एक ऑन-डिव्हाइस वैयक्तिक आर्थिक व्यवस्थापन (PFM) ॲप आहे.",
+                "sec1_desc2": "आम्ही पूर्णपणे <b>\"नो-अकाउंट, नो-टेलीमेट्री, झिरो-ट्रॅकिंग\"</b> मॉडेलवर काम करतो. वैयक्तिक आर्थिक गोपनीयता हा मूलभूत अधिकार आहे यावर आमचा विश्वास आहे.",
+                "sec2_title": "२. मागितलेल्या परवानग्या आणि अचूक तांत्रिक कारणे",
+                "sec2_desc": "गुगल प्ले डेव्हलपर धोरणे आणि आर्थिक डेटा मार्गदर्शक तत्त्वांचे काटेकोर पालन करून, SpendGrid केवळ आवश्यक परवानग्या मागते:",
+                "p_sms_title": "ए. एसएमएस प्रवेश (READ_SMS आणि RECEIVE_SMS)",
+                "p_sms_badge": "आर्थिक व्यवस्थापन",
+                "p_sms_l1": "<b>मुख्य उद्देश:</b> बँक डेबिट आणि क्रेडिट संदेश (उदा. HDFC, SBI, ICICI, Axis, Jio Payments, Slice, Sadhana Bank) आपोआप वाचून न चुकता नोंदी करणे.",
+                "p_sms_l2": "<b>वाचलेला डेटा:</b> केवळ अधिकृत बँक संदेश, शेवटचे खाते क्रमांक (उदा. <i>x1185, XX8619</i>), आणि व्यवहाराची रक्कम.",
+                "p_sms_l3": "<b>दुर्लक्षित डेटा:</b> वैयक्तिक गप्पा, कौटुंबिक संदेश, जाहिरात लिंक्स, ओटीपी आणि टेलिकॉम जाहिराती १००% नाकारल्या जातात.",
+                "p_sms_l4": "<b>प्रक्रिया:</b> १००% डिव्हाइसच्या आत स्थानिक प्रक्रिया. कोणताही एसएमएस डेटा अपलोड किंवा सामायिक केला जात नाही.",
+                "p_notif_title": "बी. नोटिफिकेशन ॲक्सेस (BIND_NOTIFICATION_LISTENER_SERVICE)",
+                "p_notif_badge": "थेट ऑटो-सिंक",
+                "p_notif_l1": "<b>मुख्य उद्देश:</b> जेव्हा बँका एसएमएस पाठवत नाहीत, तेव्हा यूपीआय गेटवे (GPay, PhonePe, Paytm, JioFinance, CRED) कडून थेट पेमेंट सूचना मिळवणे.",
+                "p_notif_l2": "<b>व्याप्ती:</b> केवळ आर्थिक सूचना वाचल्या जातात. इतर ॲप्स दुर्लक्षित केले जातात.",
+                "p_notif_l3": "<b>शून्य बॅकग्राउंड ट्रान्समिशन:</b> कॅप्चर केलेल्या सूचना केवळ तुमच्या स्थानिक डिव्हाइस स्टोरेजमध्ये सेव्ह होतात.",
+                "p_mic_title": "सी. मायक्रोफोन ॲक्सेस (RECORD_AUDIO) [पर्यायी]",
+                "p_mic_badge": "व्हॉइस कमांड लॉगर",
+                "p_mic_l1": "<b>उद्देश:</b> केवळ बोलून खर्च नोंदवण्यासाठी वापरले जाते (उदा. <i>\"वीस रुपये रिक्षा कॅश\"</i>).",
+                "p_mic_l2": "<b>प्रक्रिया:</b> डिव्हाइसच्या स्पीच इंजिनद्वारे रूपांतरित होते. कोणताही ऑडिओ जतन किंवा अपलोड केला जात नाही.",
+                "p_storage_title": "डी. स्टोरेज प्रवेश (MediaStore API)",
+                "p_storage_badge": "डेटा निर्यात आणि पीडीएफ",
+                "p_storage_l1": "<b>उद्देश:</b> तुमचा डेटा <code>.CSV</code> किंवा <code>.PDF</code> स्वरूपात थेट तुमच्या <code>Download/SpendGrid/</code> फोल्डरमध्ये जतन करण्याची परवानगी देतो.",
+                "p_vib_title": "ई. हॅप्टिक फीडबॅक (VIBRATE)",
+                "p_vib_badge": "टॅक्टाइल यूआय",
+                "p_vib_l1": "<b>उद्देश:</b> बटण दाबल्यावर २५ मिलीसेकंदांचे सूक्ष्म कंपन प्रदान करते.",
+                "sec3_title": "३. आम्ही काय ॲक्सेस करतो विरुद्ध आम्ही कशाला कधीही स्पर्श करत नाही",
+                "sec3_never_title": "🚫 SpendGrid ज्याला कधीही स्पर्श करत नाही:",
+                "sec3_never_l1": "आम्ही तुमचे वैयक्तिक व्हॉट्सॲप, टेलिग्राम किंवा एसएमएस संभाषणे कधीही वाचत नाही.",
+                "sec3_never_l2": "आम्ही बँकिंग पासवर्ड, यूपीआय पिन, सीव्हीव्ही किंवा पूर्ण कार्ड नंबर कधीही स्टोअर करत नाही.",
+                "sec3_never_l3": "आम्ही तुमचे संपर्क, फोटो किंवा स्थान डेटा कधीही अपलोड करत नाही.",
+                "sec3_yes_title": "✅ SpendGrid जे काटेकोरपणे वाचते:",
+                "sec3_yes_l1": "आर्थिक व्यवहार डेबिट आणि क्रेडिट रक्कम.",
+                "sec3_yes_l2": "व्यापारी / प्राप्तकर्त्याचे नाव (उदा. Swiggy, Uber, Amazon, JioFinance).",
+                "sec3_yes_l3": "दुहेरी नोंदी रोखण्यासाठी १२-अंकी NPCI UTR / संदर्भ क्रमांक.",
+                "sec_ads_title": "४. तृतीय-पक्ष जाहिराती आणि जाहिरात नेटवर्क",
+                "sec_ads_desc1": "SpendGrid सर्व वापरकर्त्यांसाठी मोफत ठेवण्यासाठी, आम्ही सत्यापित जाहिरात नेटवर्कद्वारे (जसे की <b>Google AdMob</b>) जाहिराती दाखवू शकतो.",
+                "sec_ads_l1": "<b>मानक अभिज्ञापक:</b> जाहिरात नेटवर्क Google Play धोरणांनुसार योग्य जाहिराती दाखवण्यासाठी मानक डिव्हाइस अभिज्ञापक (उदा. Google Advertising ID) वापरू शकतात.",
+                "sec_ads_l2": "<b>शून्य आर्थिक डेटा सामायिकरण:</b> जाहिरात नेटवर्ककडे तुमच्या बँक संदेश, यूपीआय रेकॉर्ड किंवा आर्थिक माहितीचा <b>०% प्रवेश</b> आहे. तुमचा आर्थिक डेटा पूर्णपणे तुमच्या फोनमध्ये सुरक्षित राहतो.",
+                "badge_warning": "कडक शून्य डेटा-विक्री हमी",
+                "warning_text": "आम्ही तुमचा वैयक्तिक किंवा आर्थिक डेटा कोणालाही विकत नाही, भाड्याने देत नाही किंवा सामायिक करत नाही. तुमचा डेटा तुमच्या फोनमध्ये पूर्णपणे सुरक्षित आहे.",
+                "sec7_title": "५. वापरकर्ता नियंत्रण आणि डेटा हटवणे",
+                "sec7_desc": "तुमच्या डेटावर नेहमी तुमचे १००% नियंत्रण असते:",
+                "sec7_l1": "<b>वैयक्तिक हटवणे:</b> तुम्ही कोणताही एक किंवा अनेक व्यवहार एका क्लिकवर हटवू शकता.",
+                "sec7_l2": "<b>सेंडर ब्लॉक करा:</b> तुम्ही नको असलेले मेसेज पाठवणारे थेट ब्लॉक करू शकता.",
+                "sec7_l3": "<b>पूर्ण रीसेट:</b> सेटिंग्जमध्ये <b>\"सर्व डेटा हटवा\"</b> दाबल्याने फोनमधील सर्व नोंदी कायमच्या मिटवल्या जातात.",
+                "sec7_l4": "<b>अनइन्स्टॉल:</b> ॲप अनइन्स्टॉल केल्याने फोनमधील सर्व लोकल डेटाबेस फायली पूर्णपणे काढून टाकल्या जातात.",
+                "sec_child_title": "६. मुलांची गोपनीयता (COPPA अनुपालन)",
+                "sec_child_desc": "SpendGrid : बजेट आणि वेल्थ OS हे केवळ १८ वर्षे आणि त्याहून अधिक वयाच्या व्यक्तींसाठी आहे. आम्ही १३ वर्षांखालील मुलांचा कोणताही डेटा जाणूनबुजून गोळा किंवा प्रक्रिया करत नाही.",
+                "sec11_title": "७. वारंवार विचारले जाणारे प्रश्न (सुरक्षा FAQ)",
+                "faq1_q": "SpendGrid माझे बँकिंग ओटीपी वाचू शकते का?",
+                "faq1_a": "<b>नाही.</b> SpendGrid चे इंजिन केवळ आर्थिक व्यवहारांना ओळखते आणि ओटीपी (OTP) आपोआप वगळते.",
+                "faq2_q": "SpendGrid माझे बँक व्यवहार कोणत्याही सर्व्हरवर अपलोड करते का?",
+                "faq2_a": "<b>नाही.</b> SpendGrid कोणत्याही क्लाउड सर्व्हरशी कनेक्ट होत नाही. सर्व नोंदी तुमच्या फोनमध्येच राहतात.",
+                "faq3_q": "फोन बदलताना मी माझ्या डेटाचा बॅकअप कसा घेऊ?",
+                "faq3_a": "<b>सेटिंग्ज ➔ बॅकअप निर्यात (.CSV)</b> वर जा. फाइल थेट तुमच्या <code>Download/SpendGrid/</code> फोल्डरमध्ये सेव्ह होईल.",
+                "dev_tag": "तांत्रिक अभियांत्रिकी संघ",
+                "dev_name": "SpendGrid कोर टीम",
+                "dev_desc": "जगभरातील वापरकर्त्यांसाठी अत्यंत सुरक्षित आणि १००% ऑन-डिव्हाइस आर्थिक OS प्रदान करण्यासाठी आमचे समर्पित डेव्हलपर (संतोष) आणि टीमद्वारे डिझाइन आणि देखरेख.",
+                "dev_contact_label": "गोपनीयताबाबत चौकशी, डेटा हटवण्याच्या विनंत्या किंवा समर्थनासाठी संपर्क साधा:",
+                "footer_text": "SpendGrid : बजेट आणि वेल्थ OS • १००% ऑन-डिव्हाइस आर्थिक OS<br>© २०२६ SpendGrid. सर्व हक्क राखीव."
+            }
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedLang = safeGetItem('spendgrid_lang', 'en');
+            setLanguage(savedLang);
+        });
+
+        function setLanguage(lang) {
+            safeSetItem('spendgrid_lang', lang);
+            const texts = langData[lang] || langData['en'];
+            document.querySelectorAll('[data-key]').forEach(el => {
+                const key = el.getAttribute('data-key');
+                if (texts[key]) el.innerHTML = texts[key];
+            });
+            document.querySelectorAll('.lang-chip').forEach(chip => chip.classList.remove('active'));
+            const activeChip = document.getElementById('chip-' + lang);
+            if (activeChip) activeChip.classList.add('active');
+        }
+
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('copy', e => e.preventDefault());
+        document.addEventListener('cut', e => e.preventDefault());
+        document.addEventListener('selectstart', e => e.preventDefault());
+        document.addEventListener('dragstart', e => e.preventDefault());
+    </script>
+</body>
+</html>
