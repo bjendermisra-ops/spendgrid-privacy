@@ -1,0 +1,1938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Live Broadcaster</title>
+
+  <style>
+    /* ==========================================================================
+       RESET & ROOT VARIABLES
+       ========================================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    :root {
+      --bg-color: #000000;
+      --surface-color: rgba(26, 26, 30, 0.75);
+      --surface-border: rgba(255, 255, 255, 0.12);
+      --surface-glass: rgba(18, 18, 22, 0.65);
+      --text-primary: #ffffff;
+      --text-secondary: #9ea3ae;
+      --text-muted: #6b7280;
+      
+      --accent-live: #ff2a2a;
+      --accent-live-glow: rgba(255, 42, 42, 0.45);
+      --accent-active: #3b82f6;
+      --accent-success: #10b981;
+      --accent-warning: #f59e0b;
+      
+      --radius-sm: 10px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      --radius-full: 9999px;
+      
+      --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-smooth: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --safe-left: env(safe-area-inset-left, 0px);
+      --safe-right: env(safe-area-inset-right, 0px);
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      height: 100dvh;
+      overflow: hidden;
+      background-color: var(--bg-color);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    }
+
+    /* ==========================================================================
+       APP CONTAINER & LAYOUT
+       ========================================================================== */
+    #app {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      height: 100dvh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #000;
+    }
+
+    .viewport-frame {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      max-width: 480px; /* Responsive desktop container constraint */
+      max-height: 100dvh;
+      overflow: hidden;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+    }
+
+    @media (min-width: 768px) {
+      .viewport-frame {
+        height: 94dvh;
+        max-height: 900px;
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--surface-border);
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+      }
+    }
+
+    /* ==========================================================================
+       CAMERA VIEWFINDER
+       ========================================================================== */
+    .viewfinder-container {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background: #050505;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    #camera-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(1);
+      transition: transform var(--transition-normal), opacity var(--transition-normal);
+      opacity: 0;
+      background: #000;
+    }
+
+    #camera-video.mirrored {
+      transform: scaleX(-1);
+    }
+
+    #camera-video.ready {
+      opacity: 1;
+    }
+
+    /* ==========================================================================
+       OVERLAY LAYERS
+       ========================================================================== */
+    .ui-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: calc(var(--safe-top) + 12px) calc(var(--safe-right) + 16px) calc(var(--safe-bottom) + 18px) calc(var(--safe-left) + 16px);
+      box-sizing: border-box;
+    }
+
+    .ui-layer * {
+      pointer-events: auto;
+    }
+
+    /* Header Bar */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      min-height: 44px;
+      gap: 8px;
+    }
+
+    .status-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Pill Badges */
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: var(--radius-full);
+      background: var(--surface-glass);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--surface-border);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      color: var(--text-primary);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      transition: all var(--transition-fast);
+    }
+
+    .status-pill.live {
+      background: rgba(220, 38, 38, 0.85);
+      border-color: rgba(255, 100, 100, 0.4);
+      box-shadow: 0 0 16px var(--accent-live-glow);
+    }
+
+    .status-pill.offline {
+      background: rgba(220, 38, 38, 0.3);
+      color: #fca5a5;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ffffff;
+      animation: pulse-dot 1.4s infinite;
+    }
+
+    @keyframes pulse-dot {
+      0% { transform: scale(0.9); opacity: 0.7; }
+      50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 8px #fff; }
+      100% { transform: scale(0.9); opacity: 0.7; }
+    }
+
+    .info-pill {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      padding: 6px 10px;
+    }
+
+    .network-quality-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-success);
+    }
+
+    .network-quality-dot.weak { background: var(--accent-warning); }
+    .network-quality-dot.bad { background: var(--accent-live); }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Icon Buttons */
+    .icon-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      min-height: 44px;
+      border-radius: 50%;
+      background: var(--surface-glass);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--surface-border);
+      color: var(--text-primary);
+      cursor: pointer;
+      outline: none;
+      transition: all var(--transition-fast);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .icon-btn:active {
+      transform: scale(0.92);
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .icon-btn:focus-visible {
+      outline: 2px solid var(--accent-active);
+      outline-offset: 2px;
+    }
+
+    .icon-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    .icon-btn.active {
+      background: rgba(255, 255, 255, 0.9);
+      color: #000;
+      border-color: #ffffff;
+    }
+
+    .icon-btn.muted {
+      color: #ef4444;
+      border-color: rgba(239, 68, 68, 0.4);
+      background: rgba(239, 68, 68, 0.15);
+    }
+
+    .icon-btn:disabled {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    /* Zoom Slider overlay on side */
+    .side-controls {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      z-index: 12;
+      transition: opacity var(--transition-normal);
+    }
+
+    .zoom-slider-container {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      background: var(--surface-glass);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--surface-border);
+      border-radius: var(--radius-full);
+      padding: 12px 6px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    }
+
+    .zoom-slider-container.available {
+      display: flex;
+    }
+
+    .zoom-slider {
+      writing-mode: vertical-lr;
+      direction: rtl;
+      width: 20px;
+      height: 120px;
+      margin: 8px 0;
+      accent-color: #ffffff;
+      cursor: pointer;
+    }
+
+    .zoom-label {
+      font-size: 0.6875rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+    }
+
+    /* Bottom Control Bar */
+    .bottom-bar {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      width: 100%;
+      align-items: center;
+    }
+
+    .quick-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      width: 100%;
+    }
+
+    /* Primary Broadcast Buttons */
+    .primary-btn-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .btn-go-live {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ff3333, #d90429);
+      color: #ffffff;
+      border: 3px solid rgba(255, 255, 255, 0.85);
+      box-shadow: 0 0 24px var(--accent-live-glow), 0 8px 24px rgba(0,0,0,0.4);
+      cursor: pointer;
+      outline: none;
+      transition: all var(--transition-normal);
+    }
+
+    .btn-go-live:active {
+      transform: scale(0.92);
+      box-shadow: 0 0 12px var(--accent-live-glow);
+    }
+
+    .btn-go-live:focus-visible {
+      outline: 3px solid #ffffff;
+      outline-offset: 3px;
+    }
+
+    .btn-go-live .btn-text {
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    .btn-go-live svg {
+      width: 22px;
+      height: 22px;
+      fill: currentColor;
+    }
+
+    .btn-go-live.connecting {
+      background: linear-gradient(135deg, #4b5563, #374151);
+      border-color: var(--text-secondary);
+      animation: spin-pulse 2s infinite linear;
+      pointer-events: none;
+    }
+
+    @keyframes spin-pulse {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* End Live Button */
+    .btn-end-live {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      height: 52px;
+      padding: 0 28px;
+      border-radius: var(--radius-full);
+      background: rgba(220, 38, 38, 0.95);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      color: #ffffff;
+      font-size: 0.9375rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+      cursor: pointer;
+      outline: none;
+      transition: all var(--transition-fast);
+    }
+
+    .btn-end-live:active {
+      transform: scale(0.95);
+      background: #b91c1c;
+    }
+
+    .btn-end-live:focus-visible {
+      outline: 2px solid #ffffff;
+      outline-offset: 2px;
+    }
+
+    .btn-end-live svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+
+    /* ==========================================================================
+       MODALS & BOTTOM SHEETS
+       ========================================================================== */
+    .modal-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 50;
+      display: flex;
+      align-items: flex-end;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition-normal);
+    }
+
+    .modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .bottom-sheet {
+      width: 100%;
+      background: #18181c;
+      border-top: 1px solid var(--surface-border);
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      padding: 20px 20px calc(var(--safe-bottom) + 24px) 20px;
+      transform: translateY(100%);
+      transition: transform var(--transition-smooth);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      max-height: 85dvh;
+      overflow-y: auto;
+    }
+
+    .modal-backdrop.open .bottom-sheet {
+      transform: translateY(0);
+    }
+
+    .sheet-handle {
+      width: 36px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: var(--radius-full);
+      align-self: center;
+      margin-bottom: -4px;
+    }
+
+    .sheet-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .sheet-title {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .sheet-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+    }
+
+    .radio-pill-group {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .radio-pill-btn {
+      padding: 10px 0;
+      border-radius: calc(var(--radius-md) - 3px);
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      text-align: center;
+    }
+
+    .radio-pill-btn.active {
+      background: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+
+    .info-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      font-size: 0.75rem;
+      line-height: 1.45;
+      color: var(--text-secondary);
+    }
+
+    .info-card strong {
+      color: #ffffff;
+    }
+
+    /* Modal Action Buttons */
+    .sheet-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 6px;
+    }
+
+    .sheet-btn {
+      flex: 1;
+      height: 48px;
+      border-radius: var(--radius-md);
+      font-size: 0.9375rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .sheet-btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+    }
+
+    .sheet-btn-secondary:active {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .sheet-btn-danger {
+      background: #dc2626;
+      color: #ffffff;
+    }
+
+    .sheet-btn-danger:active {
+      background: #b91c1c;
+    }
+
+    /* ==========================================================================
+       NOTIFICATION TOAST & FULLSCREEN ALERTS
+       ========================================================================== */
+    .toast-container {
+      position: absolute;
+      top: calc(var(--safe-top) + 64px);
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 40;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      width: 90%;
+      max-width: 380px;
+    }
+
+    .toast {
+      background: var(--surface-glass);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--surface-border);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: var(--radius-full);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      animation: toast-in 0.3s ease forwards;
+      text-align: center;
+    }
+
+    @keyframes toast-in {
+      from { opacity: 0; transform: translateY(-10px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Fullscreen Screen States (Loading / Permission / Fatal Error) */
+    .state-screen {
+      position: absolute;
+      inset: 0;
+      background: #09090b;
+      z-index: 30;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 24px;
+      text-align: center;
+      gap: 16px;
+      transition: opacity var(--transition-normal);
+    }
+
+    .state-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .state-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 8px;
+    }
+
+    .state-icon svg {
+      width: 32px;
+      height: 32px;
+      fill: var(--text-secondary);
+    }
+
+    .state-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .state-desc {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      max-width: 320px;
+    }
+
+    .tech-details {
+      margin-top: 8px;
+      padding: 10px 14px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-sm);
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: #ef4444;
+      max-width: 100%;
+      word-break: break-all;
+      text-align: left;
+      display: none;
+    }
+
+    .state-btn {
+      margin-top: 12px;
+      height: 48px;
+      padding: 0 28px;
+      border-radius: var(--radius-full);
+      background: #ffffff;
+      color: #000000;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      outline: none;
+      transition: transform var(--transition-fast);
+    }
+
+    .state-btn:active {
+      transform: scale(0.95);
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(255, 255, 255, 0.1);
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: spin 1s infinite linear;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+<div id="app">
+  <div class="viewport-frame" id="viewport-frame">
+    
+    <!-- CAMERA PREVIEW -->
+    <div class="viewfinder-container">
+      <video id="camera-video" playsinline autoplay muted></video>
+    </div>
+
+    <!-- UI OVERLAY -->
+    <div class="ui-layer" id="ui-layer">
+      
+      <!-- TOP STATUS & CONTROLS -->
+      <div class="top-bar">
+        <div class="status-group">
+          <div id="live-indicator" class="status-pill" style="display: none;">
+            <div class="live-dot"></div>
+            <span>LIVE</span>
+            <span id="live-timer" style="margin-left: 4px; font-variant-numeric: tabular-nums;">00:00:00</span>
+          </div>
+
+          <div id="quality-pill" class="status-pill info-pill">
+            <span id="quality-label">720p</span>
+            <span class="network-quality-dot" id="network-dot"></span>
+            <span id="network-label">Good</span>
+          </div>
+        </div>
+
+        <div class="top-actions">
+          <!-- Flashlight / Torch -->
+          <button id="btn-torch" class="icon-btn" aria-label="Toggle Flashlight" style="display: none;">
+            <svg viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l3-8z"/></svg>
+          </button>
+
+          <!-- Fullscreen -->
+          <button id="btn-fullscreen" class="icon-btn" aria-label="Toggle Fullscreen">
+            <svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+          </button>
+
+          <!-- Pre-live Settings -->
+          <button id="btn-settings" class="icon-btn" aria-label="Streaming Settings">
+            <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- SIDE ZOOM CONTROL -->
+      <div class="side-controls">
+        <div class="zoom-slider-container" id="zoom-container">
+          <span class="zoom-label" id="zoom-max-label">2x</span>
+          <input type="range" class="zoom-slider" id="zoom-slider" min="1" max="2" step="0.1" value="1" aria-label="Camera Zoom" />
+          <span class="zoom-label" id="zoom-min-label">1x</span>
+        </div>
+      </div>
+
+      <!-- BOTTOM CONTROL BAR -->
+      <div class="bottom-bar">
+        <div class="quick-controls">
+          <!-- Mic Toggle -->
+          <button id="btn-mic" class="icon-btn" aria-label="Toggle Microphone">
+            <svg id="icon-mic-on" viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85C16.52 14.2 14.47 16 12 16s-4.52-1.8-4.93-4.15c-.08-.49-.49-.85-.98-.85-.61 0-1.09.54-1 1.14.49 3 2.89 5.35 5.91 5.78V20c0 .55.45 1 1 1s1-.45 1-1v-2.08c3.02-.43 5.42-2.78 5.91-5.78.1-.6-.39-1.14-1-1.14z"/></svg>
+            <svg id="icon-mic-off" style="display:none;" viewBox="0 0 24 24"><path d="M19 11h-1.7c0 .74-.16 1.43-.43 2.05l1.23 1.23c.56-.98.9-2.09.9-3.28zm-4.02.17c0-.06.02-.11.02-.17V5c0-1.66-1.34-3-3-3S9 3.34 9 5v.18l5.98 5.99zM4.27 3L3 4.27l6.01 6.01V11c0 1.66 1.33 3 2.99 3 .22 0 .44-.03.65-.08l4.07 4.07c-1.13.72-2.45 1.16-3.72 1.25V21h-2v-1.76c-3.24-.45-5.76-3.08-6-6.24H3c.27 3.73 3.12 6.78 6.73 7.24V22h4.54v-1.76c.86-.11 1.69-.38 2.45-.78l3.01 3.01 1.27-1.27L4.27 3z"/></svg>
+          </button>
+
+          <!-- Primary Action (GO LIVE) -->
+          <div class="primary-btn-container">
+            <button id="btn-go-live" class="btn-go-live" aria-label="Go Live">
+              <svg viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
+              <span class="btn-text">LIVE</span>
+            </button>
+            <button id="btn-end-live" class="btn-end-live" aria-label="End Live Stream">
+              <svg viewBox="0 0 24 24"><path d="M6 6h12v12H6z"/></svg>
+              <span>END LIVE</span>
+            </button>
+          </div>
+
+          <!-- Flip Camera -->
+          <button id="btn-switch-camera" class="icon-btn" aria-label="Switch Camera">
+            <svg viewBox="0 0 24 24"><path d="M20 4h-3.17L15 2H9L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-5 11.5V13H9v2.5L5.5 12 9 8.5V11h6V8.5l3.5 3.5-3.5 3.5z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOAST MESSAGES -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- FULLSCREEN STATE OVERLAY (Permission, Loader, Errors) -->
+    <div class="state-screen" id="state-screen">
+      <div id="state-spinner" class="spinner"></div>
+      <div id="state-icon" class="state-icon" style="display: none;">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+      </div>
+      <h2 class="state-title" id="state-title">Preparing camera…</h2>
+      <p class="state-desc" id="state-desc">Please grant camera and microphone access when prompted.</p>
+      <div class="tech-details" id="state-details"></div>
+      <button class="state-btn" id="state-btn" style="display: none;">Try Again</button>
+    </div>
+
+    <!-- PRE-LIVE SETTINGS MODAL -->
+    <div class="modal-backdrop" id="settings-modal" role="dialog" aria-modal="true">
+      <div class="bottom-sheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-header">
+          <h3 class="sheet-title">Broadcast Settings</h3>
+          <button class="icon-btn" id="btn-close-settings" aria-label="Close Settings" style="width:36px; height:36px; min-width:36px; min-height:36px;">
+            <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+          </button>
+        </div>
+
+        <div class="sheet-section">
+          <span class="section-label">Video Target Quality</span>
+          <div class="radio-pill-group" id="quality-selector">
+            <button class="radio-pill-btn" data-quality="480p">480p</button>
+            <button class="radio-pill-btn active" data-quality="720p">720p</button>
+            <button class="radio-pill-btn" data-quality="1080p">1080p</button>
+          </div>
+        </div>
+
+        <div class="sheet-section">
+          <span class="section-label">Camera Preference</span>
+          <div class="radio-pill-group" id="facing-selector">
+            <button class="radio-pill-btn" data-facing="user">Front</button>
+            <button class="radio-pill-btn active" data-facing="environment">Rear</button>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <strong>Backend Relay Architecture</strong><br />
+          Stream is encoded in browser and published to relay server. Relay dynamically converts and streams to YouTube RTMPS via server-side <code>pkmx-2ar4-yhgh-e803-96z0</code>.
+        </div>
+
+        <button class="sheet-btn sheet-btn-secondary" id="btn-save-settings">Done</button>
+      </div>
+    </div>
+
+    <!-- END STREAM CONFIRMATION MODAL -->
+    <div class="modal-backdrop" id="confirm-end-modal" role="dialog" aria-modal="true">
+      <div class="bottom-sheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-header">
+          <h3 class="sheet-title">End Live Stream?</h3>
+        </div>
+        <p class="state-desc" style="text-align: left;">Your active broadcast to YouTube will immediately stop.</p>
+        <div class="sheet-actions">
+          <button class="sheet-btn sheet-btn-secondary" id="btn-cancel-end">Cancel</button>
+          <button class="sheet-btn sheet-btn-danger" id="btn-confirm-end">End Live</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/**
+ * ============================================================================
+ * 1. CENTRALIZED STREAMING CONFIGURATION
+ * ============================================================================
+ * The browser connects to your secure Streaming Relay backend.
+ * Never expose permanent YouTube Stream Keys here.
+ */
+const CONFIG = {
+  API_BASE_URL: "https://YOUR-BACKEND.vercel.app",
+  WS_URL: "wss://YOUR-STREAMING-RELAY.example.com",
+  DEFAULT_QUALITY: "720p",
+  DEFAULT_FACING_MODE: "environment", // 'environment' (rear) or 'user' (front)
+  CHUNK_DURATION_MS: 1000,
+  RECONNECT_DELAYS: [1000, 2000, 4000, 8000],
+  MAX_RECONNECT_ATTEMPTS: 4
+};
+
+/**
+ * ============================================================================
+ * 2. APPLICATION STATE MACHINE
+ * ============================================================================
+ */
+const AppState = {
+  IDLE: "IDLE",
+  CAMERA_LOADING: "CAMERA_LOADING",
+  READY: "READY",
+  CONNECTING: "CONNECTING",
+  LIVE: "LIVE",
+  RECONNECTING: "RECONNECTING",
+  ENDING: "ENDING",
+  ERROR: "ERROR"
+};
+
+/**
+ * ============================================================================
+ * 3. SETTINGS MANAGER (Local UI Preferences)
+ * ============================================================================
+ */
+class SettingsManager {
+  constructor() {
+    this.STORAGE_KEY = "live_broadcaster_ui_prefs";
+    this.state = {
+      quality: CONFIG.DEFAULT_QUALITY,
+      facingMode: CONFIG.DEFAULT_FACING_MODE,
+      micEnabled: true
+    };
+    this.load();
+  }
+
+  load() {
+    try {
+      const saved = localStorage.getItem(this.STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.quality) this.state.quality = parsed.quality;
+        if (parsed.facingMode) this.state.facingMode = parsed.facingMode;
+        if (typeof parsed.micEnabled === "boolean") this.state.micEnabled = parsed.micEnabled;
+      }
+    } catch (e) {
+      console.warn("Could not load preferences from localStorage", e);
+    }
+  }
+
+  save() {
+    try {
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.state));
+    } catch (e) {
+      console.warn("Could not save preferences to localStorage", e);
+    }
+  }
+
+  getQualityConstraints() {
+    switch (this.state.quality) {
+      case "1080p":
+        return { width: { ideal: 1920 }, height: { ideal: 1080 }, frameRate: { ideal: 30, max: 30 } };
+      case "480p":
+        return { width: { ideal: 854 }, height: { ideal: 480 }, frameRate: { ideal: 30, max: 30 } };
+      case "720p":
+      default:
+        return { width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30, max: 30 } };
+    }
+  }
+
+  getTargetBitrate() {
+    switch (this.state.quality) {
+      case "1080p": return 4500000; // 4.5 Mbps
+      case "480p": return 1200000;  // 1.2 Mbps
+      case "720p":
+      default: return 2500000;      // 2.5 Mbps
+    }
+  }
+}
+
+/**
+ * ============================================================================
+ * 4. CAMERA & AUDIO HARDWARE MANAGER
+ * ============================================================================
+ */
+class MediaHardwareManager {
+  constructor(videoElement) {
+    this.videoElement = videoElement;
+    this.mediaStream = null;
+    this.videoTrack = null;
+    this.audioTrack = null;
+    this.torchEnabled = false;
+    this.zoomSupported = false;
+  }
+
+  async initialize(facingMode, qualityConstraints, micEnabled) {
+    this.stopAllTracks();
+
+    const constraints = {
+      video: {
+        facingMode: { ideal: facingMode },
+        ...qualityConstraints
+      },
+      audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true
+      }
+    };
+
+    const stream = await navigator.mediaDevices.getUserMedia(constraints);
+    this.mediaStream = stream;
+    this.videoTrack = stream.getVideoTracks()[0] || null;
+    this.audioTrack = stream.getAudioTracks()[0] || null;
+
+    if (this.audioTrack) {
+      this.audioTrack.enabled = micEnabled;
+    }
+
+    this.videoElement.srcObject = stream;
+    await this.videoElement.play();
+
+    // Mirroring handling
+    const settings = this.videoTrack ? this.videoTrack.getSettings() : {};
+    const isFront = settings.facingMode === "user" || facingMode === "user";
+    if (isFront) {
+      this.videoElement.classList.add("mirrored");
+    } else {
+      this.videoElement.classList.remove("mirrored");
+    }
+
+    return this.detectHardwareCapabilities();
+  }
+
+  detectHardwareCapabilities() {
+    let capabilities = {};
+    if (this.videoTrack && typeof this.videoTrack.getCapabilities === "function") {
+      try {
+        capabilities = this.videoTrack.getCapabilities();
+      } catch (e) {
+        console.warn("getCapabilities error", e);
+      }
+    }
+
+    const hasTorch = Boolean(capabilities.torch);
+    const hasZoom = Boolean(capabilities.zoom);
+    const zoomRange = hasZoom ? { min: capabilities.zoom.min, max: capabilities.zoom.max, step: capabilities.zoom.step } : null;
+
+    this.zoomSupported = hasZoom;
+    return { hasTorch, hasZoom, zoomRange };
+  }
+
+  async setTorch(enable) {
+    if (!this.videoTrack) return false;
+    try {
+      await this.videoTrack.applyConstraints({
+        advanced: [{ torch: enable }]
+      });
+      this.torchEnabled = enable;
+      return true;
+    } catch (e) {
+      console.warn("Torch failed", e);
+      this.torchEnabled = false;
+      return false;
+    }
+  }
+
+  async setZoom(zoomLevel) {
+    if (!this.videoTrack || !this.zoomSupported) return;
+    try {
+      await this.videoTrack.applyConstraints({
+        advanced: [{ zoom: parseFloat(zoomLevel) }]
+      });
+    } catch (e) {
+      console.warn("Zoom apply error", e);
+    }
+  }
+
+  toggleMicrophone() {
+    if (this.audioTrack) {
+      this.audioTrack.enabled = !this.audioTrack.enabled;
+      return this.audioTrack.enabled;
+    }
+    return false;
+  }
+
+  stopAllTracks() {
+    if (this.mediaStream) {
+      this.mediaStream.getTracks().forEach(track => {
+        try { track.stop(); } catch (e) {}
+      });
+      this.mediaStream = null;
+      this.videoTrack = null;
+      this.audioTrack = null;
+    }
+    if (this.videoElement) {
+      this.videoElement.srcObject = null;
+    }
+  }
+}
+
+/**
+ * ============================================================================
+ * 5. WAKE LOCK MANAGER
+ * ============================================================================
+ */
+class WakeLockManager {
+  constructor() {
+    this.wakeLock = null;
+  }
+
+  async request() {
+    if ("wakeLock" in navigator) {
+      try {
+        this.wakeLock = await navigator.wakeLock.request("screen");
+        this.wakeLock.addEventListener("release", () => {
+          this.wakeLock = null;
+        });
+      } catch (err) {
+        console.warn("WakeLock error:", err);
+      }
+    }
+  }
+
+  release() {
+    if (this.wakeLock) {
+      try {
+        this.wakeLock.release();
+      } catch (e) {}
+      this.wakeLock = null;
+    }
+  }
+}
+
+/**
+ * ============================================================================
+ * 6. NETWORK QUALITY MONITOR
+ * ============================================================================
+ */
+class NetworkManager {
+  constructor(onNetworkChange) {
+    this.onNetworkChange = onNetworkChange;
+    this.isOnline = navigator.onLine;
+
+    window.addEventListener("online", () => this.handleStatusChange(true));
+    window.addEventListener("offline", () => this.handleStatusChange(false));
+
+    if ("connection" in navigator && navigator.connection) {
+      navigator.connection.addEventListener("change", () => {
+        this.evaluateQuality();
+      });
+    }
+  }
+
+  handleStatusChange(online) {
+    this.isOnline = online;
+    this.evaluateQuality();
+  }
+
+  evaluateQuality() {
+    if (!navigator.onLine) {
+      this.onNetworkChange({ status: "offline", label: "Offline", quality: "bad" });
+      return;
+    }
+
+    if ("connection" in navigator && navigator.connection) {
+      const conn = navigator.connection;
+      const type = conn.effectiveType; // '4g', '3g', '2g', 'slow-2g'
+      if (type === "4g") {
+        this.onNetworkChange({ status: "online", label: "Excellent", quality: "good" });
+      } else if (type === "3g") {
+        this.onNetworkChange({ status: "online", label: "Fair", quality: "weak" });
+      } else {
+        this.onNetworkChange({ status: "online", label: "Poor", quality: "bad" });
+      }
+    } else {
+      this.onNetworkChange({ status: "online", label: "Online", quality: "good" });
+    }
+  }
+}
+
+/**
+ * ============================================================================
+ * 7. STREAM TRANSPORT (MediaRecorder over WebSocket)
+ * ============================================================================
+ */
+class StreamTransport {
+  constructor() {
+    this.websocket = null;
+    this.mediaRecorder = null;
+    this.onSocketClose = null;
+    this.onSocketError = null;
+    this.onLiveConfirmed = null;
+    this.isEstablished = false;
+  }
+
+  static getSupportedMimeType() {
+    const types = [
+      'video/webm;codecs=vp8,opus',
+      'video/webm;codecs=h264,opus',
+      'video/webm;codecs=vp9,opus',
+      'video/mp4;codecs=avc1,mp4a.40.2',
+      'video/webm'
+    ];
+    for (const t of types) {
+      if (window.MediaRecorder && MediaRecorder.isTypeSupported(t)) {
+        return t;
+      }
+    }
+    return "";
+  }
+
+  async connect(wsUrl, stream, targetBitrate) {
+    return new Promise((resolve, reject) => {
+      try {
+        this.websocket = new WebSocket(wsUrl);
+        this.websocket.binaryType = "arraybuffer";
+
+        this.websocket.onopen = () => {
+          this.startMediaRecorder(stream, targetBitrate);
+        };
+
+        this.websocket.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            if (data.type === "LIVE_ACK" || data.status === "live") {
+              this.isEstablished = true;
+              if (this.onLiveConfirmed) this.onLiveConfirmed();
+              resolve();
+            }
+          } catch (e) {
+            // Binary feedback or unparsed payload
+          }
+        };
+
+        this.websocket.onerror = (err) => {
+          if (this.onSocketError) this.onSocketError(err);
+          reject(err);
+        };
+
+        this.websocket.onclose = (ev) => {
+          this.cleanupRecorder();
+          if (this.onSocketClose) this.onSocketClose(ev);
+        };
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
+
+  startMediaRecorder(stream, targetBitrate) {
+    const mimeType = StreamTransport.getSupportedMimeType();
+    const options = {
+      videoBitsPerSecond: targetBitrate,
+      audioBitsPerSecond: 128000
+    };
+    if (mimeType) {
+      options.mimeType = mimeType;
+    }
+
+    this.mediaRecorder = new MediaRecorder(stream, options);
+
+    this.mediaRecorder.ondataavailable = async (event) => {
+      if (event.data && event.data.size > 0 && this.websocket && this.websocket.readyState === WebSocket.OPEN) {
+        try {
+          const buffer = await event.data.arrayBuffer();
+          this.websocket.send(buffer);
+        } catch (e) {
+          console.error("Error sending chunk over WS:", e);
+        }
+      }
+    };
+
+    this.mediaRecorder.start(CONFIG.CHUNK_DURATION_MS);
+  }
+
+  cleanupRecorder() {
+    if (this.mediaRecorder && this.mediaRecorder.state !== "inactive") {
+      try {
+        this.mediaRecorder.stop();
+      } catch (e) {}
+    }
+    this.mediaRecorder = null;
+  }
+
+  disconnect() {
+    this.cleanupRecorder();
+    if (this.websocket) {
+      this.websocket.onclose = null;
+      this.websocket.onerror = null;
+      this.websocket.onmessage = null;
+      try {
+        this.websocket.close();
+      } catch (e) {}
+      this.websocket = null;
+    }
+    this.isEstablished = false;
+  }
+}
+
+/**
+ * ============================================================================
+ * 8. LIVE SESSION MANAGER (Backend API REST & Polling Lifecycle)
+ * ============================================================================
+ */
+class LiveSessionManager {
+  constructor(apiBaseUrl) {
+    this.apiBaseUrl = apiBaseUrl.replace(/\/+$/, "");
+    this.sessionId = null;
+    this.statusPollTimer = null;
+  }
+
+  async startSession(quality, mimeType) {
+    const response = await fetch(`${this.apiBaseUrl}/api/live/start`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ quality, mimeType })
+    });
+
+    if (!response.ok) {
+      const errBody = await response.json().catch(() => ({}));
+      throw new Error(errBody.message || `Backend session creation failed (${response.status})`);
+    }
+
+    const data = await response.json();
+    if (!data.success || !data.sessionId) {
+      throw new Error(data.message || "Invalid start session response from backend");
+    }
+
+    this.sessionId = data.sessionId;
+    return data;
+  }
+
+  async verifyStatus(sessionId) {
+    const id = sessionId || this.sessionId;
+    if (!id) return false;
+
+    const res = await fetch(`${this.apiBaseUrl}/api/live/status/${id}`);
+    if (!res.ok) return false;
+    const data = await res.json();
+    return data.success && data.status === "live";
+  }
+
+  async stopSession() {
+    if (!this.sessionId) return;
+    try {
+      await fetch(`${this.apiBaseUrl}/api/live/stop`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionId: this.sessionId })
+      });
+    } catch (e) {
+      console.warn("Stop session request error:", e);
+    } finally {
+      this.sessionId = null;
+      this.clearStatusPoll();
+    }
+  }
+
+  startStatusPolling(onStatusChanged) {
+    this.clearStatusPoll();
+    this.statusPollTimer = setInterval(async () => {
+      if (!this.sessionId) return;
+      try {
+        const isLive = await this.verifyStatus(this.sessionId);
+        if (!isLive) {
+          onStatusChanged("disconnected");
+        }
+      } catch (e) {
+        // Network drop handled by NetworkManager
+      }
+    }, 5000);
+  }
+
+  clearStatusPoll() {
+    if (this.statusPollTimer) {
+      clearInterval(this.statusPollTimer);
+      this.statusPollTimer = null;
+    }
+  }
+}
+
+/**
+ * ============================================================================
+ * 9. UI CONTROLLER & APPLICATION ORCHESTRATOR
+ * ============================================================================
+ */
+class BroadcasterApp {
+  constructor() {
+    this.currentState = AppState.IDLE;
+    this.settings = new SettingsManager();
+    this.hardware = new MediaHardwareManager(document.getElementById("camera-video"));
+    this.transport = new StreamTransport();
+    this.session = new LiveSessionManager(CONFIG.API_BASE_URL);
+    this.wakeLock = new WakeLockManager();
+    this.network = new NetworkManager(this.handleNetworkStatus.bind(this));
+
+    this.liveStartTime = 0;
+    this.timerInterval = null;
+    this.reconnectAttempt = 0;
+    this.reconnectTimeout = null;
+
+    this.dom = {
+      video: document.getElementById("camera-video"),
+      liveIndicator: document.getElementById("live-indicator"),
+      liveTimer: document.getElementById("live-timer"),
+      qualityPill: document.getElementById("quality-pill"),
+      qualityLabel: document.getElementById("quality-label"),
+      networkDot: document.getElementById("network-dot"),
+      networkLabel: document.getElementById("network-label"),
+      btnGoLive: document.getElementById("btn-go-live"),
+      btnEndLive: document.getElementById("btn-end-live"),
+      btnMic: document.getElementById("btn-mic"),
+      iconMicOn: document.getElementById("icon-mic-on"),
+      iconMicOff: document.getElementById("icon-mic-off"),
+      btnSwitchCam: document.getElementById("btn-switch-camera"),
+      btnTorch: document.getElementById("btn-torch"),
+      btnFullscreen: document.getElementById("btn-fullscreen"),
+      btnSettings: document.getElementById("btn-settings"),
+      zoomContainer: document.getElementById("zoom-container"),
+      zoomSlider: document.getElementById("zoom-slider"),
+      zoomMinLabel: document.getElementById("zoom-min-label"),
+      zoomMaxLabel: document.getElementById("zoom-max-label"),
+      settingsModal: document.getElementById("settings-modal"),
+      confirmEndModal: document.getElementById("confirm-end-modal"),
+      btnCloseSettings: document.getElementById("btn-close-settings"),
+      btnSaveSettings: document.getElementById("btn-save-settings"),
+      btnCancelEnd: document.getElementById("btn-cancel-end"),
+      btnConfirmEnd: document.getElementById("btn-confirm-end"),
+      qualitySelectors: document.querySelectorAll("#quality-selector .radio-pill-btn"),
+      facingSelectors: document.querySelectorAll("#facing-selector .radio-pill-btn"),
+      toastContainer: document.getElementById("toast-container"),
+      stateScreen: document.getElementById("state-screen"),
+      stateSpinner: document.getElementById("state-spinner"),
+      stateIcon: document.getElementById("state-icon"),
+      stateTitle: document.getElementById("state-title"),
+      stateDesc: document.getElementById("state-desc"),
+      stateDetails: document.getElementById("state-details"),
+      stateBtn: document.getElementById("state-btn")
+    };
+
+    this.initEventListeners();
+  }
+
+  async start() {
+    this.checkSecureContext();
+    this.updateQualityDisplay();
+    await this.initCamera();
+  }
+
+  checkSecureContext() {
+    if (!window.isSecureContext && location.hostname !== "localhost" && location.hostname !== "127.0.0.1") {
+      this.showFatalError(
+        "HTTPS Required",
+        "Camera and live broadcasting APIs require a secure HTTPS connection or localhost.",
+        "Current location is insecure (HTTP)."
+      );
+      return false;
+    }
+    return true;
+  }
+
+  initEventListeners() {
+    // Media Controls
+    this.dom.btnMic.addEventListener("click", () => this.toggleMic());
+    this.dom.btnSwitchCam.addEventListener("click", () => this.switchCamera());
+    this.dom.btnTorch.addEventListener("click", () => this.toggleTorch());
+    this.dom.zoomSlider.addEventListener("input", (e) => this.hardware.setZoom(e.target.value));
+
+    // Live Actions
+    this.dom.btnGoLive.addEventListener("click", () => this.handleGoLiveClick());
+    this.dom.btnEndLive.addEventListener("click", () => this.openEndConfirmation());
+
+    // Settings Modal
+    this.dom.btnSettings.addEventListener("click", () => this.openSettings());
+    this.dom.btnCloseSettings.addEventListener("click", () => this.closeSettings());
+    this.dom.btnSaveSettings.addEventListener("click", () => this.saveSettings());
+
+    // Settings Quality Radio
+    this.dom.qualitySelectors.forEach(btn => {
+      btn.addEventListener("click", () => {
+        this.dom.qualitySelectors.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        this.settings.state.quality = btn.dataset.quality;
+      });
+    });
+
+    // Settings Facing Radio
+    this.dom.facingSelectors.forEach(btn => {
+      btn.addEventListener("click", () => {
+        this.dom.facingSelectors.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        this.settings.state.facingMode = btn.dataset.facing;
+      });
+    });
+
+    // End Live Modal Actions
+    this.dom.btnCancelEnd.addEventListener("click", () => this.closeEndConfirmation());
+    this.dom.btnConfirmEnd.addEventListener("click", () => this.executeEndLive());
+
+    // Fullscreen Toggle
+    this.dom.btnFullscreen.addEventListener("click", () => this.toggleFullscreen());
+
+    // State Screen Action (Retry)
+    this.dom.stateBtn.addEventListener("click", () => {
+      this.hideStateScreen();
+      this.initCamera();
+    });
+
+    // Transport event listeners
+    this.transport.onSocketError = (err) => this.handleTransportError(err);
+    this.transport.onSocketClose = () => this.handleTransportClosed();
+  }
+
+  /* --------------------------------------------------------------------------
+     CAMERA & PERMISSION MANAGEMENT
+     -------------------------------------------------------------------------- */
+  async initCamera() {
+    this.setState(AppState.CAMERA_LOADING);
+    this.showStateScreen("Preparing camera…", "Requesting hardware access…", true);
+
+    try {
+      const caps = await this.hardware.initialize(
+        this.settings.state.facingMode,
+        this.settings.getQualityConstraints(),
+        this.settings.state.micEnabled
+      );
+
+      this.dom.video.classList.add("ready");
+      this.hideStateScreen();
+      this.setState(AppState.READY);
+
+      // Hardware UI toggles
+      if (caps.hasTorch && this.settings.state.facingMode === "environment") {
+        this.dom.btnTorch.style.display = "inline-flex";
+      } else {
+        this.dom.btnTorch.style.display = "none";
+      }
+
+      if (caps.hasZoom && caps.zoomRange) {
+        this.dom.zoomContainer.classList.add("available");
+        this.dom.zoomSlider.min = caps.zoomRange.min;
+        this.dom.zoomSlider.max = caps.zoomRange.max;
+        this.dom.zoomSlider.step = caps.zoomRange.step || 0.1;
+        this.dom.zoomSlider.value = caps.zoomRange.min;
+        this.dom.zoomMinLabel.textContent = `${caps.zoomRange.min}x`;
+        this.dom.zoomMaxLabel.textContent = `${caps.zoomRange.max}x`;
+      } else {
+        this.dom.zoomContainer.classList.remove("available");
+      }
+
+      this.updateMicUi();
+    } catch (err) {
+      console.error("Camera Init Error:", err);
+      let title = "Camera Access Error";
+      let desc = "Unable to access camera and microphone.";
+      
+      if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
+        title = "Permission Denied";
+        desc = "Camera & microphone permissions were blocked. Please enable them in browser settings and reload.";
+      } else if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
+        title = "No Camera Detected";
+        desc = "No camera hardware was found on your device.";
+      } else if (err.name === "NotReadableError" || err.name === "TrackStartError") {
+        title = "Camera In Use";
+        desc = "Camera is already in use by another application or tab.";
+      }
+
+      this.showFatalError(title, desc, err.message);
+    }
+  }
+
+  async switchCamera() {
+    if (this.currentState === AppState.CONNECTING) return;
+    const newFacing = this.settings.state.facingMode === "environment" ? "user" : "environment";
+    this.settings.state.facingMode = newFacing;
+    this.settings.save();
+    this.showToast(`Switched to ${newFacing === "environment" ? "Rear" : "Front"} Camera`);
+    await this.initCamera();
+  }
+
+  toggleMic() {
+    const isEnabled = this.hardware.toggleMicrophone();
+    this.settings.state.micEnabled = isEnabled;
+    this.settings.save();
+    this.updateMicUi();
+    this.showToast(isEnabled ? "Microphone Unmuted" : "Microphone Muted");
+  }
+
+  updateMicUi() {
+    if (this.settings.state.micEnabled) {
+      this.dom.iconMicOn.style.display = "block";
+      this.dom.iconMicOff.style.display = "none";
+      this.dom.btnMic.classList.remove("muted");
+    } else {
+      this.dom.iconMicOn.style.display = "none";
+      this.dom.iconMicOff.style.display = "block";
+      this.dom.btnMic.classList.add("muted");
+    }
+  }
+
+  async toggleTorch() {
+    const newState = !this.hardware.torchEnabled;
+    const success = await this.hardware.setTorch(newState);
+    if (success) {
+      if (newState) {
+        this.dom.btnTorch.classList.add("active");
+        this.showToast("Flashlight ON");
+      } else {
+        this.dom.btnTorch.classList.remove("active");
+        this.showToast("Flashlight OFF");
+      }
+    }
+  }
+
+  /* --------------------------------------------------------------------------
+     BROADCAST LIFECYCLE (GO LIVE / ACKNOWLEDGEMENT / END LIVE)
+     -------------------------------------------------------------------------- */
+  async handleGoLiveClick() {
+    if (this.currentState !== AppState.READY) return;
+    if (!navigator.onLine) {
+      this.showToast("Cannot go live: No internet connection.");
+      return;
+    }
+
+    this.setState(AppState.CONNECTING);
+    this.showToast("Initializing streaming session…");
+
+    try {
+      const mimeType = StreamTransport.getSupportedMimeType();
+      
+      // Step 1: Request session from backend
+      const sessionData = await this.session.startSession(this.settings.state.quality, mimeType);
+      
+      // Step 2: Establish streaming transport (WebSocket / WebRTC)
+      const targetWsUrl = sessionData.wsUrl || `${CONFIG.WS_URL}/live/${sessionData.sessionId}`;
+      
+      this.showToast("Connecting to streaming relay…");
+      await this.transport.connect(
+        targetWsUrl,
+        this.hardware.mediaStream,
+        this.settings.getTargetBitrate()
+      );
+
+      // Step 3: Wait for relay confirmation ack before showing LIVE
+      this.enterLiveState();
+
+    } catch (err) {
+      console.error("Live Start Error:", err);
+      this.setState(AppState.READY);
+      this.showToast(`Stream start failed: ${err.message}`);
+    }
+  }
+
+  enterLiveState() {
+    this.setState(AppState.LIVE);
+    this.liveStartTime = Date.now();
+    this.startLiveTimer();
+    this.wakeLock.request();
+    this.reconnectAttempt = 0;
+    this.showToast("You are now LIVE on YouTube!");
+
+    // Start background status check polling
+    this.session.startStatusPolling((status) => {
+      if (status === "disconnected" && this.currentState === AppState.LIVE) {
+        this.handleConnectionInterruption("Relay reported disconnect");
+      }
+    });
+  }
+
+  openEndConfirmation() {
+    this.dom.confirmEndModal.classList.add("open");
+  }
+
+  closeEndConfirmation() {
+    this.dom.confirmEndModal.classList.remove("open");
+  }
+
+  async executeEndLive() {
+    this.closeEndConfirmation();
+    this.setState(AppState.ENDING);
+    this.showToast("Ending live broadcast…");
+
+    this.stopLiveTimer();
+    this.session.clearStatusPoll();
+    this.transport.disconnect();
+    await this.session.stopSession();
+    this.wakeLock.release();
+
+    this.showToast("Live broadcast ended.");
+    this.setState(AppState.READY);
+  }
+
+  /* --------------------------------------------------------------------------
+     RECONNECTION LOGIC
+     -------------------------------------------------------------------------- */
+  handleConnectionInterruption(reason) {
+    if (this.currentState !== AppState.LIVE) return;
+
+    this.setState(AppState.RECONNECTING);
+    this.showToast(`Connection lost (${reason}). Reconnecting…`);
+    this.attemptReconnect();
+  }
+
+  async attemptReconnect() {
+    if (this.reconnectAttempt >= CONFIG.MAX_RECONNECT_ATTEMPTS) {
+      this.showToast("Reconnection failed. Ending session.");
+      await this.executeEndLive();
+      return;
+    }
+
+    const delay = CONFIG.RECONNECT_DELAYS[this.reconnectAttempt] || 8000;
+    this.reconnectAttempt++;
+    
+    this.showToast(`Reconnecting attempt ${this.reconnectAttempt}/${CONFIG.MAX_RECONNECT_ATTEMPTS} in ${delay/1000}s…`);
+
+    this.reconnectTimeout = setTimeout(async () => {
+      if (this.currentState !== AppState.RECONNECTING) return;
+      try {
+        const mimeType = StreamTransport.getSupportedMimeType();
+        const sessionData = await this.session.startSession(this.settings.state.quality, mimeType);
+        const targetWsUrl = sessionData.wsUrl || `${CONFIG.WS_URL}/live/${sessionData.sessionId}`;
+
+        await this.transport.connect(
+          targetWsUrl,
+          this.hardware.mediaStream,
+          this.settings.getTargetBitrate()
+        );
+
+        this.setState(AppState.LIVE);
+        this.reconnectAttempt = 0;
+        this.showToast("Reconnected! Broadcast resumed.");
+      } catch (e) {
+        console.warn("Reconnect attempt error:", e);
+        this.attemptReconnect();
+      }
+    }, delay);
+  }
+
+  handleTransportError(err) {
+    console.error("Transport error:", err);
+    if (this.currentState === AppState.LIVE) {
+      this.handleConnectionInterruption("Transport socket error");
+    }
+  }
+
+  handleTransportClosed() {
+    if (this.currentState === AppState.LIVE) {
+      this.handleConnectionInterruption("Relay closed socket");
+    }
+  }
+
+  /* --------------------------------------------------------------------------
+     STATE & UI SYNCHRONIZATION
+     -------------------------------------------------------------------------- */
+  setState(newState) {
+    this.currentState = newState;
+    console.log(`[Broadcaster State] -> ${newState}`);
+
+    switch (newState) {
+      case AppState.READY:
+        this.dom.btnGoLive.style.display = "flex";
+        this.dom.btnGoLive.classList.remove("connecting");
+        this.dom.btnEndLive.style.display = "none";
+        this.dom.liveIndicator.style.display = "none";
+        this.dom.btnSettings.disabled = false;
+        this.dom.btnSwitchCam.disabled = false;
+        break;
+
+      case AppState.CONNECTING:
+        this.dom.btnGoLive.classList.add("connecting");
+        this.dom.btnSettings.disabled = true;
+        this.dom.btnSwitchCam.disabled = true;
+        break;
+
+      case AppState.LIVE:
+        this.dom.btnGoLive.style.display = "none";
+        this.dom.btnGoLive.classList.remove("connecting");
+        this.dom.btnEndLive.style.display = "flex";
+        this.dom.liveIndicator.style.display = "flex";
+        this.dom.liveIndicator.classList.add("live");
+        this.dom.btnSettings.disabled = true;
+        break;
+
+      case AppState.RECONNECTING:
+        this.dom.liveIndicator.classList.remove("live");
+        this.dom.liveIndicator.classList.add("offline");
+        break;
+
+      case AppState.ENDING:
+        this.dom.btnEndLive.disabled = true;
+        break;
+    }
+  }
+
+  startLiveTimer() {
+    this.stopLiveTimer();
+    this.dom.liveTimer.textContent = "00:00:00";
+    this.timerInterval = setInterval(() => {
+      const elapsedSec = Math.floor((Date.now() - this.liveStartTime) / 1000);
+      const hours = String(Math.floor(elapsedSec / 3600)).padStart(2, "0");
+      const minutes = String(Math.floor((elapsedSec % 3600) / 60)).padStart(2, "0");
+      const seconds = String(elapsedSec % 60).padStart(2, "0");
+      this.dom.liveTimer.textContent = `${hours}:${minutes}:${seconds}`;
+    }, 1000);
+  }
+
+  stopLiveTimer() {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+    }
+  }
+
+  handleNetworkStatus(networkInfo) {
+    this.dom.networkLabel.textContent = networkInfo.label;
+    this.dom.networkDot.className = `network-quality-dot ${networkInfo.quality}`;
+
+    if (networkInfo.status === "offline" && this.currentState === AppState.LIVE) {
+      this.handleConnectionInterruption("Network offline");
+    }
+  }
+
+  updateQualityDisplay() {
+    this.dom.qualityLabel.textContent = this.settings.state.quality;
+  }
+
+  /* --------------------------------------------------------------------------
+     MODAL & OVERLAY HELPERS
+     -------------------------------------------------------------------------- */
+  openSettings() {
+    if (this.currentState === AppState.LIVE || this.currentState === AppState.CONNECTING) return;
+    
+    // Sync settings radio buttons with current state
+    this.dom.qualitySelectors.forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.quality === this.settings.state.quality);
+    });
+    this.dom.facingSelectors.forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.facing === this.settings.state.facingMode);
+    });
+
+    this.dom.settingsModal.classList.add("open");
+  }
+
+  closeSettings() {
+    this.dom.settingsModal.classList.remove("open");
+  }
+
+  async saveSettings() {
+    this.settings.save();
+    this.updateQualityDisplay();
+    this.closeSettings();
+    await this.initCamera();
+  }
+
+  toggleFullscreen() {
+    if (!document.fullscreenElement) {
+      const el = document.getElementById("viewport-frame") || document.documentElement;
+      if (el.requestFullscreen) {
+        el.requestFullscreen().catch(e => console.warn(e));
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen().catch(e => console.warn(e));
+      }
+    }
+  }
+
+  showToast(message) {
+    const toast = document.createElement("div");
+    toast.className = "toast";
+    toast.textContent = message;
+    this.dom.toastContainer.appendChild(toast);
+
+    setTimeout(() => {
+      toast.style.transition = "opacity 0.3s ease";
+      toast.style.opacity = "0";
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
+  }
+
+  showStateScreen(title, desc, isSpinner = true) {
+    this.dom.stateTitle.textContent = title;
+    this.dom.stateDesc.textContent = desc;
+    this.dom.stateSpinner.style.display = isSpinner ? "block" : "none";
+    this.dom.stateIcon.style.display = isSpinner ? "none" : "flex";
+    this.dom.stateDetails.style.display = "none";
+    this.dom.stateBtn.style.display = "none";
+    this.dom.stateScreen.classList.remove("hidden");
+  }
+
+  hideStateScreen() {
+    this.dom.stateScreen.classList.add("hidden");
+  }
+
+  showFatalError(title, desc, technicalDetails = "") {
+    this.setState(AppState.ERROR);
+    this.dom.stateTitle.textContent = title;
+    this.dom.stateDesc.textContent = desc;
+    this.dom.stateSpinner.style.display = "none";
+    this.dom.stateIcon.style.display = "flex";
+    this.dom.stateBtn.style.display = "inline-block";
+
+    if (technicalDetails) {
+      this.dom.stateDetails.textContent = technicalDetails;
+      this.dom.stateDetails.style.display = "block";
+    } else {
+      this.dom.stateDetails.style.display = "none";
+    }
+
+    this.dom.stateScreen.classList.remove("hidden");
+  }
+}
+
+// Instantiate application on DOM load
+window.addEventListener("DOMContentLoaded", () => {
+  const app = new BroadcasterApp();
+  app.start();
+});
+</script>
+</body>
+</html>
