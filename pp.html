@@ -1,0 +1,1953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Codix iOS WebView Pro — Configuration Builder</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+--accent:#D9622B;--accent-h:#C05520;--accent-l:rgba(217,98,43,.1);--accent-g:rgba(217,98,43,.3);
+--bg:#F3F4F8;--card:#fff;--sidebar:#0E1018;--sidebar2:#15171F;--code-bg:#131525;
+--tx:#181B24;--tx2:#5F6775;--txm:#9CA3AF;--txw:#E8EAF0;
+--bd:#DDE0E8;--bd2:#E8EAF0;
+--ok:#22C55E;--wn:#F59E0B;--er:#EF4444;--info:#3B82F6;
+--r:10px;--rs:6px;--rl:14px;
+--sh:0 1px 3px rgba(0,0,0,.05);--sh2:0 4px 16px rgba(0,0,0,.08);--sh3:0 10px 30px rgba(0,0,0,.1);
+--side:280px;--head:60px;--foot:66px;
+}
+html{font-size:14px;-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-serif;background:var(--bg);color:var(--tx);line-height:1.55;overflow:hidden;height:100vh}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit}
+.app{display:flex;height:100vh;overflow:hidden}
+
+/* Sidebar */
+.side{width:var(--side);min-width:var(--side);background:linear-gradient(175deg,var(--sidebar2) 0%,var(--sidebar) 100%);display:flex;flex-direction:column;z-index:100;transition:transform .3s}
+.side-hd{padding:26px 22px 18px;border-bottom:1px solid rgba(255,255,255,.06)}
+.side-logo{display:flex;align-items:center;gap:10px}
+.side-logo span{font-size:1.3rem;font-weight:800;color:var(--txw);letter-spacing:-.02em}
+.side-pro{font-size:.6rem;font-weight:700;background:var(--accent);color:#fff;padding:2px 7px;border-radius:4px;letter-spacing:.05em;vertical-align:middle}
+.side-sub{font-size:.75rem;color:var(--txm);margin-top:5px}
+.side-nav{flex:1;overflow-y:auto;padding:14px 10px}
+.side-nav::-webkit-scrollbar{width:3px}
+.side-nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px}
+.si{display:flex;align-items:center;gap:11px;padding:9px 13px;border-radius:9px;cursor:pointer;transition:all .15s;margin-bottom:2px;border:none;background:none;width:100%;text-align:left}
+.si:hover{background:rgba(255,255,255,.04)}
+.si.on{background:var(--accent-l)}
+.si.on .sn{background:var(--accent);color:#fff;box-shadow:0 0 14px var(--accent-g)}
+.si.dn .sn{background:var(--ok);color:#fff}
+.si.dn .ck{display:flex}
+.sn{width:28px;height:28px;min-width:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;background:rgba(255,255,255,.07);color:var(--txm);transition:all .2s;position:relative}
+.ck{display:none;position:absolute;top:-4px;right:-4px;width:14px;height:14px;background:var(--ok);border-radius:50%;border:2px solid var(--sidebar2);align-items:center;justify-content:center}
+.ck svg{width:7px;height:7px}
+.sl{font-size:.85rem;color:rgba(255,255,255,.45);font-weight:500;transition:color .15s}
+.si.on .sl{color:#fff;font-weight:600}
+.si.dn .sl{color:rgba(255,255,255,.65)}
+.side-ft{padding:14px 18px 22px;border-top:1px solid rgba(255,255,255,.06)}
+.prog-lab{font-size:.7rem;color:var(--txm);margin-bottom:6px;display:flex;justify-content:space-between}
+.prog-bar{height:4px;background:rgba(255,255,255,.07);border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;background:var(--accent);border-radius:4px;transition:width .4s}
+.btn-rst{width:100%;padding:8px;border:1px solid rgba(255,255,255,.08);background:transparent;color:var(--txm);border-radius:var(--rs);cursor:pointer;font-size:.78rem;font-weight:500;transition:all .15s;margin-top:12px}
+.btn-rst:hover{border-color:var(--er);color:var(--er);background:rgba(239,68,68,.06)}
+
+/* Main */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.m-head{height:var(--head);padding:0 28px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);background:var(--card);min-height:var(--head);gap:12px}
+.m-title{font-size:1.1rem;font-weight:700;color:var(--tx)}
+.m-step{font-size:.7rem;font-weight:600;color:var(--accent);background:var(--accent-l);padding:3px 10px;border-radius:20px;white-space:nowrap}
+.btn-m{display:none;width:36px;height:36px;border:none;background:var(--accent-l);border-radius:var(--rs);cursor:pointer;color:var(--accent);align-items:center;justify-content:center;flex-shrink:0}
+.m-body{flex:1;overflow-y:auto;padding:26px 30px 18px}
+.m-body::-webkit-scrollbar{width:5px}
+.m-body::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);border-radius:3px}
+.m-foot{height:var(--foot);min-height:var(--foot);padding:0 28px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--bd);background:var(--card);gap:12px}
+.save-ind{font-size:.72rem;color:var(--txm);display:flex;align-items:center;gap:6px}
+.save-dot{width:6px;height:6px;border-radius:50%;background:var(--ok)}
+
+/* Buttons */
+.btn{padding:9px 20px;border-radius:var(--rs);font-size:.84rem;font-weight:600;cursor:pointer;transition:all .15s;border:none;display:inline-flex;align-items:center;gap:7px}
+.btn-p{background:var(--accent);color:#fff}
+.btn-p:hover{background:var(--accent-h);box-shadow:0 2px 12px var(--accent-g)}
+.btn-s{background:var(--bg);color:var(--tx);border:1px solid var(--bd)}
+.btn-s:hover{border-color:var(--tx2)}
+.btn-sm{padding:5px 12px;font-size:.76rem}
+.btn-i{width:32px;height:32px;padding:0;justify-content:center;border-radius:var(--rs);background:var(--bg);border:1px solid var(--bd);cursor:pointer;color:var(--tx2);transition:all .15s;display:inline-flex;align-items:center;justify-content:center}
+.btn-i:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-l)}
+.btn-i.dng:hover{border-color:var(--er);color:var(--er);background:rgba(239,68,68,.05)}
+.btn-i:disabled{opacity:.3;pointer-events:none}
+
+/* Forms */
+.desc{font-size:.86rem;color:var(--tx2);margin-bottom:22px;line-height:1.65}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:var(--rl);padding:22px;box-shadow:var(--sh)}
+.card+.card{margin-top:14px}
+.card-t{font-size:.95rem;font-weight:700;color:var(--tx);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:16px 22px}
+.fg .fu{grid-column:1/-1}
+.fmi{display:flex;flex-direction:column;gap:5px}
+.fl{font-size:.78rem;font-weight:600;color:var(--tx);display:flex;align-items:center;gap:5px}
+.fl .rq{color:var(--er);font-size:.68rem}
+.fl .ht{font-weight:400;color:var(--txm);font-size:.7rem}
+.fi,.fs,.fta{padding:9px 12px;border:1px solid var(--bd);border-radius:var(--rs);font-size:.86rem;background:var(--card);color:var(--tx);transition:border .15s,box-shadow .15s;outline:none;width:100%}
+.fi:focus,.fs:focus,.fta:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-l)}
+.fi.err{border-color:var(--er);box-shadow:0 0 0 3px rgba(239,68,68,.1)}
+.fta{resize:vertical;min-height:70px;font-family:'SF Mono',Consolas,monospace;font-size:.78rem;line-height:1.5}
+.fs{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' fill='none' stroke='%236B7280' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;padding-right:30px}
+.fh{font-size:.7rem;color:var(--txm);line-height:1.4}
+.ferr{font-size:.7rem;color:var(--er);display:none}
+.fmi.has-err .ferr{display:block}
+.color-row{display:flex;align-items:center;gap:10px}
+.csw{width:40px;height:40px;border-radius:var(--rs);border:2px solid var(--bd);cursor:pointer;overflow:hidden;position:relative;flex-shrink:0}
+.csw input[type=color]{position:absolute;top:-6px;left:-6px;width:56px;height:56px;border:none;cursor:pointer}
+
+/* Toggle */
+.trow{display:flex;align-items:center;justify-content:space-between;padding:11px 15px;background:var(--card);border:1px solid var(--bd);border-radius:var(--r);transition:box-shadow .15s}
+.trow:hover{box-shadow:var(--sh2)}
+.tinfo{flex:1;min-width:0}
+.tt{font-size:.86rem;font-weight:600;color:var(--tx)}
+.td{font-size:.7rem;color:var(--txm);margin-top:2px}
+.tgl{position:relative;width:44px;height:26px;flex-shrink:0;margin-left:12px}
+.tgl input{opacity:0;width:0;height:0;position:absolute}
+.tgl-t{position:absolute;inset:0;background:#CBD5E1;border-radius:13px;cursor:pointer;transition:background .2s}
+.tgl-t::after{content:'';position:absolute;width:20px;height:20px;border-radius:50%;background:#fff;top:3px;left:3px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.tgl input:checked+.tgl-t{background:var(--accent)}
+.tgl input:checked+.tgl-t::after{transform:translateX(18px)}
+.tgl input:focus-visible+.tgl-t{outline:2px solid var(--accent);outline-offset:2px}
+
+/* Tab cards */
+.tc{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:15px;margin-bottom:10px;transition:box-shadow .15s,border-color .15s}
+.tc:hover{box-shadow:var(--sh2);border-color:rgba(0,0,0,.08)}
+.tc-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
+.tc-lbl{font-size:.8rem;font-weight:700;color:var(--accent)}
+.tc-acts{display:flex;gap:4px}
+.tc-g{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.tc-g .fu{grid-column:1/-1}
+.btn-add{width:100%;padding:12px;border:2px dashed var(--bd);background:transparent;color:var(--tx2);border-radius:var(--r);cursor:pointer;font-size:.84rem;font-weight:600;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-add:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-l)}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* SF Symbols helper */
+.symbol-help{margin:12px 0 16px;padding:14px;border:1px solid var(--bd);border-radius:var(--r);background:var(--bg2)}
+.symbol-help h4{margin:0 0 7px;font-size:.92rem;color:var(--tx)}
+.symbol-help p{margin:0 0 9px;font-size:.8rem;color:var(--tx2);line-height:1.55}
+.symbol-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
+.symbol-group{padding:10px;border:1px solid var(--bd2);border-radius:var(--rs);background:var(--card)}
+.symbol-group strong{display:block;margin-bottom:8px;font-size:.74rem;color:var(--tx);text-transform:uppercase;letter-spacing:.04em}
+.symbol-chips{display:flex;flex-wrap:wrap;gap:6px}
+.sym-chip{border:1px solid var(--bd);background:var(--bg);color:var(--tx2);border-radius:999px;padding:5px 9px;font-size:.74rem;font-weight:650;cursor:pointer}
+.sym-chip:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-l)}
+.sym-note{margin-top:10px;font-size:.76rem;color:var(--tx2);line-height:1.5}
+.sym-warn{color:var(--wn);font-weight:650}
+
+/* Score */
+.score-sec{display:flex;align-items:center;gap:30px;margin-bottom:24px;padding:26px;background:var(--card);border-radius:var(--rl);border:1px solid var(--bd);box-shadow:var(--sh)}
+.sg{position:relative;width:130px;height:130px;flex-shrink:0}
+.sg svg{width:130px;height:130px;transform:rotate(-90deg)}
+.sg-bg{fill:none;stroke:var(--bd2);stroke-width:8}
+.sg-fl{fill:none;stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset .8s,stroke .3s}
+.sg-tx{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.sg-n{font-size:2.2rem;font-weight:800;line-height:1}
+.sg-lb{font-size:.62rem;color:var(--txm);text-transform:uppercase;letter-spacing:.06em;margin-top:3px}
+.si2{flex:1}
+.sg-gr{font-size:1.3rem;font-weight:800;margin-bottom:6px}
+.sg-su{font-size:.84rem;color:var(--tx2);line-height:1.6}
+
+/* Checklist */
+.cli{display:flex;align-items:flex-start;gap:11px;padding:9px 13px;border-radius:var(--rs);margin-bottom:4px;font-size:.83rem;line-height:1.5}
+.cli.pass{background:rgba(34,197,94,.05);color:#166534}
+.cli.warn{background:rgba(245,158,11,.05);color:#92400E}
+.cli.fail{background:rgba(239,68,68,.05);color:#991B1B}
+.cli-i{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.68rem;font-weight:700;margin-top:1px}
+.cli.pass .cli-i{background:rgba(34,197,94,.12);color:var(--ok)}
+.cli.warn .cli-i{background:rgba(245,158,11,.12);color:var(--wn)}
+.cli.fail .cli-i{background:rgba(239,68,68,.12);color:var(--er)}
+
+/* Code output */
+.ftabs{display:flex;gap:0;border-bottom:2px solid var(--bd);margin-bottom:0;overflow-x:auto}
+.ftab{padding:9px 16px;font-size:.78rem;font-weight:600;color:var(--tx2);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none}
+.ftab:hover{color:var(--tx)}
+.ftab.on{color:var(--accent);border-bottom-color:var(--accent)}
+.cwrap{position:relative;background:var(--code-bg);border-radius:0 0 var(--r) var(--r);overflow:hidden}
+.cpre{padding:20px;overflow:auto;max-height:420px;font-family:'SF Mono',Consolas,'Courier New',monospace;font-size:.76rem;line-height:1.65;color:#C9D1D9;white-space:pre;tab-size:4}
+.cpre::-webkit-scrollbar{width:5px;height:5px}
+.cpre::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:3px}
+.cacts{position:absolute;top:10px;right:10px;display:flex;gap:5px}
+.cab{background:rgba(255,255,255,.07);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.08);font-size:.7rem;padding:4px 11px;border-radius:4px;cursor:pointer;transition:all .15s;font-weight:500}
+.cab:hover{background:rgba(255,255,255,.13);color:#fff}
+.cab.dl:hover{background:rgba(217,98,43,.15);color:var(--accent);border-color:var(--accent)}
+.kw{color:#FF7B72}.tp{color:#79C0FF}.st{color:#A5D6FF}.cm{color:#6E7681}.fn{color:#D2A8FF}.nm{color:#FFA657}.pr{color:#7EE787}
+
+/* Banner */
+.ban{display:flex;align-items:flex-start;gap:9px;padding:11px 14px;border-radius:var(--rs);font-size:.8rem;margin-bottom:14px;line-height:1.5}
+.ban.info{background:rgba(59,130,246,.05);color:#1E40AF;border:1px solid rgba(59,130,246,.12)}
+.ban.warning{background:rgba(245,158,11,.05);color:#92400E;border:1px solid rgba(245,158,11,.12)}
+.ban.error{background:rgba(239,68,68,.05);color:#991B1B;border:1px solid rgba(239,68,68,.12)}
+.ban.success{background:rgba(34,197,94,.05);color:#166534;border:1px solid rgba(34,197,94,.12)}
+
+/* Toast */
+.tbox{position:fixed;bottom:22px;right:22px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.tst{padding:11px 18px;border-radius:var(--rs);font-size:.8rem;font-weight:500;color:#fff;box-shadow:var(--sh3);animation:tin .3s;min-width:200px}
+.tst.ok{background:#16A34A}.tst.er{background:#DC2626}.tst.inf{background:#2563EB}
+@keyframes tin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes tout{from{opacity:1}to{opacity:0;transform:translateY(-6px)}}
+
+.sub-t{font-size:.88rem;font-weight:700;color:var(--tx);margin-bottom:12px;padding-bottom:7px;border-bottom:1px solid var(--bd2)}
+.sub-s{margin-bottom:24px}
+.sub-s:last-child{margin-bottom:0}
+
+/* Overlay */
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:150}
+.ov.show{display:block}
+
+@media(max-width:860px){
+.side{position:fixed;left:0;top:0;bottom:0;transform:translateX(-100%);z-index:200;box-shadow:var(--sh3)}
+.side.open{transform:translateX(0)}
+.btn-m{display:flex}
+.ov.show{display:block}
+.m-body{padding:18px 16px}
+.m-head{padding:0 16px}
+.m-foot{padding:0 16px}
+.fg{grid-template-columns:1fr}
+.fgrid{grid-template-columns:1fr}
+.symbol-grid{grid-template-columns:1fr}
+.tc-g{grid-template-columns:1fr 1fr}
+.score-sec{flex-direction:column;gap:18px}
+}
+@media(max-width:480px){.tc-g{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="ov" id="ov"></div>
+  <aside class="side" id="side">
+    <div class="side-hd">
+      <div class="side-logo">
+        <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><rect x="1" y="1" width="24" height="24" rx="6" fill="#D9622B"/><path d="M8 13l4 4 6-7" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>Codix <span class="side-pro">PRO</span></span>
+      </div>
+      <div class="side-sub">iOS WebView Configuration Builder</div>
+    </div>
+    <nav class="side-nav" id="sideNav"></nav>
+    <div class="side-ft">
+      <div class="prog-lab"><span>Completion</span><span id="pPct">0%</span></div>
+      <div class="prog-bar"><div class="prog-fill" id="pFill" style="width:0%"></div></div>
+      <button class="btn-rst" id="btnReset">Reset All Settings</button>
+    </div>
+  </aside>
+  <main class="main">
+    <header class="m-head">
+      <div style="display:flex;align-items:center;gap:12px;min-width:0">
+        <button class="btn-m" id="btnMenu" aria-label="Menu">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 4h14M2 9h14M2 14h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+        <h1 class="m-title" id="mTitle">App Info</h1>
+      </div>
+      <span class="m-step" id="mStep">Step 1 / 9</span>
+    </header>
+    <div class="m-body" id="mBody"></div>
+    <footer class="m-foot">
+      <button class="btn btn-s" id="btnPrev">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Previous
+      </button>
+      <div class="save-ind"><span class="save-dot"></span>Auto-saved</div>
+      <button class="btn btn-p" id="btnNext">
+        Next
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </footer>
+  </main>
+</div>
+<div class="tbox" id="tbox"></div>
+
+<script>
+/* ============================================================
+   CONSTANTS
+   ============================================================ */
+var STEPS = [
+  {id:'appInfo', title:'App Info'},
+  {id:'website', title:'Website'},
+  {id:'tabs',    title:'Tabs Builder'},
+  {id:'features',title:'Feature Flags'},
+  {id:'onboarding',title:'Native Onboarding'},
+  {id:'theme',   title:'Theme'},
+  {id:'qr',      title:'QR Scanner'},
+  {id:'admob',   title:'AdMob'},
+  {id:'push',    title:'Push Notifications'},
+  {id:'ready',   title:'App Store Readiness'},
+  {id:'gen',     title:'Generate Files'}
+];
+
+var FILES = [
+  {name:'CodixConfig.swift', gen:genAppCfg},
+  {name:'APP_REVIEW_NOTES.txt', gen:genReview},
+  {name:'SETUP_SUMMARY.txt', gen:genSummary}
+];
+
+var activeOnboardingIconInput = null;
+
+/* ============================================================
+   DEFAULT CONFIG
+   ============================================================ */
+function defaults(){
+  return {
+    appInfo:{
+      appName:'Codix',
+      bundleId:'com.codecanyon.codix',
+      version:'1.0.0',
+      supportEmail:'support@example.com',
+      privacyPolicyUrl:'',
+      termsUrl:'',
+      appLogoAssetName:'AppLogo',
+      showLogoOnSplashScreen:true,
+      showLogoOnAboutScreen:true
+    },
+    website:{
+      mainUrl:'https://example.com',
+      useBundledDemoLab:true,
+      allowedDomains:'example.com\nwww.example.com',
+      externalLinks:'safari',
+      enableLocalFallback:true,
+      enableOfflineScreen:true
+    },
+    tabs:[
+      {id:1,title:'Home',icon:'house.fill',type:'web',url:'/'},
+      {id:2,title:'Search',icon:'magnifyingglass',type:'web',url:'/search'},
+      {id:3,title:'Settings',icon:'gearshape.fill',type:'settings',url:''}
+    ],
+    features:{
+      bottomTabs:true,themeEngine:true,darkModeCSSInjection:false,
+      downloads:true,fileUploads:true,share:true,nativeActionCenter:true,
+      pullToRefresh:true,offlineScreen:true,deepLinks:true,nativeBridge:true,
+      settingsScreen:true,debugLogs:false,nativeSplash:true
+    },
+    onboarding:{
+      enabled:true,showOnlyOnce:true,showEveryLaunch:false,
+      allowSkip:true,showIndicators:true,requestPushOnFinish:false,
+      primaryButtonTitle:'Continue',skipButtonTitle:'Skip',finishButtonTitle:'Get Started',
+      pages:[
+        {id:1,title:'Welcome to Codix App',subtitle:'A fast, native-feeling iOS experience for your website.',icon:'sparkles',buttonTitle:''},
+        {id:2,title:'Browse Like a Native App',subtitle:'Enjoy smooth navigation, native actions, refresh, sharing, and offline handling.',icon:'iphone',buttonTitle:''},
+        {id:3,title:'Stay Updated',subtitle:'Enable notifications when configured to keep users connected with important updates.',icon:'bell.badge',buttonTitle:'Get Started'}
+      ]
+    },
+    theme:{
+      primaryColor:'#D9622B',
+      mode:'system',
+      darkCss:''
+    },
+    qr:{
+      enabled:true,
+      openInternalInApp:true,
+      openExternalInSafari:true,
+      copyPlainTextResult:true,
+      allowedDomainsOnly:true,
+      showResultBeforeOpening:false,
+      cameraPermissionMessage:'Camera access is needed to scan QR codes. You can enable camera access in iOS Settings.'
+    },
+    admob:{
+      enabled:false,banner:false,interstitial:false,
+      umpConsent:false,useTestIds:true,showBannerOnMain:true,showInterstitialOnLaunch:false,
+      appId:'',bannerAdUnitId:'',interstitialAdUnitId:'',
+      interstitialAfterNavCount:5,interstitialCooldownSeconds:45,excludedPatterns:'/checkout\n/payment\n/cart'
+    },
+    push:{
+      enabled:false,firebaseEnabled:false,requestOnLaunch:true,
+      foregroundNotifications:true,tokenDebugLogs:false,useGoogleServicePlist:true,
+      firebaseGoogleAppID:'',firebaseGCMSenderID:'',firebaseAPIKey:'',
+      firebaseProjectID:'',firebaseBundleID:'',firebaseClientID:'',
+      firebaseDatabaseURL:'',firebaseStorageBucket:''
+    }
+  };
+}
+
+/* ============================================================
+   STATE
+   ============================================================ */
+var cfg = null;
+var curStep = 0;
+var done = {};
+var nextTid = 10;
+var nextOnboardingPageId = 10;
+var curFile = 0;
+
+/* ============================================================
+   PERSISTENCE
+   ============================================================ */
+function save(){
+  try{localStorage.setItem('codix_cfg',JSON.stringify(cfg));}catch(e){}
+}
+
+function load(){
+  try{
+    var raw = localStorage.getItem('codix_cfg');
+    if(raw){
+      cfg = JSON.parse(raw);
+      var d = defaults();
+      /* Merge missing top-level keys */
+      for(var k in d){if(!(k in cfg)) cfg[k]=d[k];}
+      /* Merge missing nested keys */
+      for(var k in d.appInfo){if(!(k in cfg.appInfo)) cfg.appInfo[k]=d.appInfo[k];}
+      for(var k in d.website){if(!(k in cfg.website)) cfg.website[k]=d.website[k];}
+      for(var k in d.features){if(!(k in cfg.features)) cfg.features[k]=d.features[k];}
+      if(!cfg.onboarding) cfg.onboarding=d.onboarding;
+      for(var k in d.onboarding){if(!(k in cfg.onboarding)) cfg.onboarding[k]=d.onboarding[k];}
+      for(var k in d.theme){if(!(k in cfg.theme)) cfg.theme[k]=d.theme[k];}
+      if(!cfg.qr) cfg.qr=d.qr;
+      for(var k in d.qr){if(!(k in cfg.qr)) cfg.qr[k]=d.qr[k];}
+      for(var k in d.admob){if(!(k in cfg.admob)) cfg.admob[k]=d.admob[k];}
+      for(var k in d.push){if(!(k in cfg.push)) cfg.push[k]=d.push[k];}
+      if('nativeSettings' in cfg.features) cfg.features.settingsScreen = cfg.features.nativeSettings;
+      if('actionCenter' in cfg.features) cfg.features.nativeActionCenter = cfg.features.actionCenter;
+      cfg.features.offlineScreen = cfg.website.enableOfflineScreen;
+      if(!Array.isArray(cfg.tabs)) cfg.tabs=d.tabs;
+      if(!Array.isArray(cfg.onboarding.pages)) cfg.onboarding.pages=d.onboarding.pages;
+      for(var ti=0;ti<cfg.tabs.length;ti++){
+        if(cfg.tabs[ti].type==='contact') cfg.tabs[ti].type='action';
+      }
+      nextTid = 10;
+      for(var i=0;i<cfg.tabs.length;i++){if(cfg.tabs[i].id>=nextTid) nextTid=cfg.tabs[i].id+1;}
+      nextOnboardingPageId = 10;
+      for(var pi=0;pi<cfg.onboarding.pages.length;pi++){
+        if(!cfg.onboarding.pages[pi].id) cfg.onboarding.pages[pi].id = nextOnboardingPageId++;
+        if(cfg.onboarding.pages[pi].id>=nextOnboardingPageId) nextOnboardingPageId=cfg.onboarding.pages[pi].id+1;
+      }
+      return;
+    }
+  }catch(e){}
+  cfg = defaults();
+}
+
+function resetAll(){
+  if(!confirm('Reset all configuration to defaults? This cannot be undone.')) return;
+  cfg = defaults();
+  done = {};
+  save();
+  go(0);
+  toast('Configuration reset to defaults','inf');
+}
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+function go(idx){
+  if(idx<0||idx>=STEPS.length) return;
+  markDone(curStep);
+  curStep = idx;
+  renderSide();
+  renderMain();
+  updateFoot();
+  closeSide();
+  var mb = document.getElementById('mBody');
+  if(mb) mb.scrollTop = 0;
+}
+
+function markDone(idx){
+  if(idx===8){done[idx]=true;return;}
+  done[idx] = validate(idx).length===0;
+}
+
+function updateFoot(){
+  var bp = document.getElementById('btnPrev');
+  var bn = document.getElementById('btnNext');
+  bp.style.visibility = curStep===0?'hidden':'visible';
+  if(curStep===STEPS.length-1){
+    bn.style.display='none';
+  }else{
+    bn.style.display='';
+  }
+}
+
+/* ============================================================
+   SIDEBAR RENDER
+   ============================================================ */
+function renderSide(){
+  var nav = document.getElementById('sideNav');
+  var h = '';
+  for(var i=0;i<STEPS.length;i++){
+    var cls = 'si';
+    if(i===curStep) cls+=' on';
+    if(done[i]) cls+=' dn';
+    h += '<button class="'+cls+'" data-go="'+i+'">';
+    h += '<div class="sn">'+(i+1)+'<div class="ck"><svg viewBox="0 0 8 8" fill="none"><path d="M1 4l2 2 4-4" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>';
+    h += '<span class="sl">'+STEPS[i].title+'</span>';
+    h += '</button>';
+  }
+  nav.innerHTML = h;
+  /* Progress */
+  var cnt=0;for(var k in done)cnt++;
+  var pct = Math.round(cnt/STEPS.length*100);
+  document.getElementById('pPct').textContent = pct+'%';
+  document.getElementById('pFill').style.width = pct+'%';
+}
+
+/* ============================================================
+   MAIN CONTENT RENDER
+   ============================================================ */
+function renderMain(){
+  var el = document.getElementById('mBody');
+  var s = STEPS[curStep];
+  document.getElementById('mTitle').textContent = s.title;
+  document.getElementById('mStep').textContent = 'Step '+(curStep+1)+' / '+STEPS.length;
+
+  switch(s.id){
+    case 'appInfo':  el.innerHTML = rAppInfo(); break;
+    case 'website':  el.innerHTML = rWebsite(); break;
+    case 'tabs':     el.innerHTML = rTabs(); break;
+    case 'features': el.innerHTML = rFeatures(); break;
+    case 'onboarding': el.innerHTML = rOnboarding(); break;
+    case 'theme':    el.innerHTML = rTheme(); break;
+    case 'qr':       el.innerHTML = rQR(); break;
+    case 'admob':    el.innerHTML = rAdmob(); break;
+    case 'push':     el.innerHTML = rPush(); break;
+    case 'ready':    el.innerHTML = rReady(); break;
+    case 'gen':      el.innerHTML = rGen(); break;
+  }
+  bind();
+  if(s.id==='ready') updateReady();
+  if(s.id==='gen') showFile(0);
+}
+
+/* ─── App Info ─── */
+function rAppInfo(){
+  var c = cfg.appInfo;
+  return '<div class="desc">Enter your app\'s core information. App name, links, email, website, tabs, features, ads, and push are generated into CodixConfig.swift. Bundle ID and version are included in the summary for Xcode project settings.</div>'+
+  '<div class="card"><div class="card-t">App Information</div><div class="fg">'+
+    fmi('App Name','appName','appInfo.appName',c.appName,'My App','Display name shown under the app icon','App name is required',true)+
+    fmi('Bundle ID','bundleId','appInfo.bundleId',c.bundleId,'com.company.appname','Set this in Xcode Signing & Capabilities / App Store Connect','Invalid bundle ID format',true)+
+    fmi('Version','version','appInfo.version',c.version,'1.0.0','Set this in Xcode General / build settings','Use format: X.Y.Z',true)+
+    fmi('Support Email','supportEmail','appInfo.supportEmail',c.supportEmail,'support@yourdomain.com','Required by Apple for App Store contact','Invalid email address',true)+
+    fmi('Privacy Policy URL','privacyPolicyUrl','appInfo.privacyPolicyUrl',c.privacyPolicyUrl,'https://yourdomain.com/privacy','Required by Apple for most apps','',false)+
+    fmi('Terms of Service URL','termsUrl','appInfo.termsUrl',c.termsUrl,'https://yourdomain.com/terms','Recommended for compliance','',false)+
+  '</div></div>'+
+  '<div class="card"><div class="card-t">Branding</div><div class="fg">'+
+    fmi('In-App Logo Asset Name','appLogoAssetName','appInfo.appLogoAssetName',c.appLogoAssetName,'AppLogo','This is the image set used inside the app splash screen and About screen. Add an image set with this exact name inside Assets.xcassets. Do not confuse this with AppIcon.','',false,'fu')+
+    '<div class="fmi fu"><label class="fl">Logo Display</label><div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">'+
+      toggleRow2('Show logo on Splash Screen','appInfo.showLogoOnSplashScreen',c.showLogoOnSplashScreen)+
+      toggleRow2('Show logo on About Screen','appInfo.showLogoOnAboutScreen',c.showLogoOnAboutScreen)+
+    '</div><span class="fh">AppLogo is for in-app branding. AppIcon is the icon shown on the iPhone Home Screen.</span></div>'+
+  '</div></div>'+
+  ((c.appLogoAssetName && c.appLogoAssetName.trim()) ? '' : '<div class="ban warning" style="margin-top:14px"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 1.5L1.5 13h13L8 1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M8 6v3M8 11v.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg> In-App Logo Asset Name is empty. Codix will use <strong>AppLogo</strong> as a fallback. The Image Set name in Assets.xcassets must match exactly.</div>');
+}
+
+/* ─── Website ─── */
+function rWebsite(){
+  var c = cfg.website;
+  var extOpts = opt('safari','Open in Safari',c.externalLinks)+opt('inApp','Keep inside WebView',c.externalLinks);
+  return '<div class="desc">Configure the primary website and how different link types are handled.</div>'+
+  '<div class="card"><div class="card-t">Website Settings</div><div class="fg">'+
+    fmi('Main Website URL','mainUrl','website.mainUrl',c.mainUrl,'https://yourdomain.com','URL loaded on app launch','Must start with https://',true,'fu')+
+    '<div class="fmi fu"><label class="fl">Demo Lab Testing</label><div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">'+
+      toggleRow2('Use bundled Demo Lab on launch','website.useBundledDemoLab',c.useBundledDemoLab)+
+    '</div><span class="fh">Keep on while testing the template. Turn off before release to load your real website URL.</span></div>'+
+    '<div class="fmi fu"><label class="fl">Allowed Internal Domains <span class="ht">(one per line)</span></label>'+
+    '<textarea class="fta" data-path="website.allowedDomains" rows="3" placeholder="yourdomain.com&#10;www.yourdomain.com">'+esc(c.allowedDomains)+'</textarea>'+
+    '<span class="fh">Domains opened inside the WebView. Others follow external link behavior.</span></div>'+
+    '<div class="fmi"><label class="fl">External Links Behavior</label>'+
+    '<select class="fs" data-path="website.externalLinks">'+extOpts+'</select>'+
+    '<span class="fh">Matches AppConfig.externalLinksOpenInSafari. Blocking external links is not part of this template.</span></div>'+
+    '<div class="fmi"><label class="fl">Offline Options</label><div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">'+
+      toggleRow2('Enable local HTML fallback','website.enableLocalFallback',c.enableLocalFallback)+
+      toggleRow2('Show native offline screen','website.enableOfflineScreen',c.enableOfflineScreen)+
+    '</div></div>'+
+  '</div></div>';
+}
+
+/* ─── Tabs Builder ─── */
+function rTabs(){
+  var h = '<div class="desc">Configure bottom navigation tabs. Each tab appears as an icon in the tab bar.</div><div id="tabList">';
+  for(var i=0;i<cfg.tabs.length;i++){
+    h += rTabCard(cfg.tabs[i],i);
+  }
+  h += '</div>';
+  h += '<button class="btn-add" id="btnAddTab"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> Add New Tab</button>';
+  h += sfSymbolHelpBan('Tab icons');
+  return h;
+}
+
+function rTabCard(t,i){
+  var typeOpts = opt('web','Web View',t.type)+opt('settings','Settings',t.type)+opt('action','Action',t.type);
+  var urlDisplay = t.type==='web'?'flex':'none';
+  return '<div class="tc" data-tid="'+t.id+'">'+
+    '<div class="tc-hd"><span class="tc-lbl">Tab '+(i+1)+'</span><div class="tc-acts">'+
+      '<button class="btn-i" data-movet="'+t.id+'" data-dir="-1" title="Move up"'+(i===0?' disabled':'')+'><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 8l4-4 4 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>'+
+      '<button class="btn-i" data-movet="'+t.id+'" data-dir="1" title="Move down"'+(i===cfg.tabs.length-1?' disabled':'')+'><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>'+
+      '<button class="btn-i dng" data-delt="'+t.id+'" title="Remove"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></button>'+
+    '</div></div>'+
+    '<div class="tc-g">'+
+      '<div class="fmi"><label class="fl">Title <span class="rq">*</span></label><input class="fi" data-tf="title" data-tid="'+t.id+'" value="'+esc(t.title)+'" placeholder="Home"></div>'+
+      '<div class="fmi"><label class="fl">SF Symbol</label><input class="fi" data-tf="icon" data-tid="'+t.id+'" value="'+esc(t.icon)+'" placeholder="house.fill"><span class="fh">Apple built-in icon name. Type only the symbol name, for example: house, house.fill, cart, person, gearshape.</span></div>'+
+      '<div class="fmi"><label class="fl">Type</label><select class="fs" data-tf="type" data-tid="'+t.id+'">'+typeOpts+'</select></div>'+
+      '<div class="fmi fu" data-urlw="'+t.id+'" style="display:'+urlDisplay+'"><label class="fl">URL Path</label><input class="fi" data-tf="url" data-tid="'+t.id+'" value="'+esc(t.url)+'" placeholder="/ or /page"><span class="fh">Relative path appended to main website URL</span></div>'+
+    '</div></div>';
+}
+
+function sfSymbolHelpBan(title){
+  return '<div class="ban info" style="margin-top:14px"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.3"/><path d="M8 5v3.5M8 10.5v.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg><div><strong>'+title+': What is an SF Symbol?</strong><br>SF Symbols are Apple\'s built-in icon names for iOS apps. You do not upload an image here. Just type the icon name exactly, like <code>house.fill</code>, <code>cart</code>, <code>sparkles</code>, <code>iphone</code>, or <code>bell.badge</code>. If the name is misspelled, iOS cannot show that icon correctly. <a href="https://github.com/andrewtavis/sf-symbols-online">CLICK HERE</a></div></div>';
+}
+
+function sfSymbolPicker(){
+  var groups = [
+    ['General',['sparkles','star.fill','heart.fill','checkmark.seal.fill','iphone','app.badge.fill']],
+    ['Navigation',['house.fill','safari','magnifyingglass','gearshape.fill','person.fill','bell.badge.fill']],
+    ['Shopping',['cart.fill','bag.fill','creditcard.fill','shippingbox.fill','tag.fill']],
+    ['Business',['briefcase.fill','chart.bar.fill','doc.text.fill','calendar','phone.fill','envelope.fill']],
+    ['Media',['photo.fill','camera.fill','play.circle.fill','video.fill','music.note']],
+    ['Security',['lock.fill','shield.fill','key.fill','checkmark.shield.fill']]
+  ];
+  var h = '<div class="symbol-help"><h4>How to choose iPhone icons</h4>';
+  h += '<p>Codix uses SF Symbols, which are built-in iOS icon names. You do not upload images here. Just choose one of the icon names below and paste it into the icon field.</p>';
+  h += '<div class="symbol-grid">';
+  for(var i=0;i<groups.length;i++){
+    h += '<div class="symbol-group"><strong>'+groups[i][0]+'</strong><div class="symbol-chips">';
+    for(var j=0;j<groups[i][1].length;j++){
+      h += '<button type="button" class="sym-chip" data-symbol-chip="'+groups[i][1][j]+'">'+groups[i][1][j]+'</button>';
+    }
+    h += '</div></div>';
+  }
+  h += '</div><div class="sym-note"><span class="sym-warn">Use the exact icon name.</span> If the name is misspelled, iOS may show no icon.<br>For more icons, open Apple\'s SF Symbols app or check Apple\'s SF Symbols documentation.</div></div>';
+  return h;
+}
+
+/* ─── Features ─── */
+function rFeatures(){
+  var f = cfg.features;
+  var items = [
+    ['bottomTabs','Bottom Tab Bar','Native tab bar at the bottom of the screen'],
+    ['themeEngine','Theme Engine','Allow native screens to follow the selected theme mode'],
+    ['darkModeCSSInjection','Dark Mode CSS Injection','Inject custom CSS into the website when enabled'],
+    ['downloads','Downloads','Allow users to download files from the WebView'],
+    ['fileUploads','File Uploads','Enable file upload from device to website forms'],
+    ['share','Share','Show share actions in the native action menu'],
+    ['nativeActionCenter','Action Center','Toolbar menu for share, reload, support, cache, and settings'],
+    ['pullToRefresh','Pull to Refresh','Allow users to refresh the website by pulling down'],
+    ['offlineScreen','Offline Screen','Show the native offline screen when network fails'],
+    ['nativeBridge','Native Bridge','JavaScript-to-native communication channel'],
+    ['settingsScreen','Native Settings','Built-in settings screen for the app'],
+    ['deepLinks','Deep Links','Handle custom URL schemes and universal links'],
+    ['nativeSplash','Native Splash','Show the branded native loading screen on launch'],
+    ['debugLogs','Debug Logs','Console logging for development (disable for production)']
+  ];
+  var h = '<div class="desc">Toggle features on or off. Disabled features are excluded from the build.</div><div class="fgrid">';
+  for(var i=0;i<items.length;i++){
+    h += trow(items[i][1],items[i][2],'features.'+items[i][0],f[items[i][0]]);
+  }
+  h += '</div>';
+  if(f.debugLogs){
+    h += '<div class="ban warning" style="margin-top:14px"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 1.5L1.5 13h13L8 1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M8 6v3M8 11v.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg> Debug logs are enabled. Disable before submitting to the App Store.</div>';
+  }
+  return h;
+}
+
+/* ─── Native Onboarding ─── */
+function rOnboarding(){
+  var o = cfg.onboarding;
+  var h = '<div class="desc">Configure native SwiftUI onboarding screens shown after the splash screen and before the main WebView.</div>';
+  h += '<div class="card"><div class="card-t">Onboarding Settings</div><div class="fgrid">';
+  h += trow('Enable Native Onboarding','Show onboarding before the WebView app loads','onboarding.enabled',o.enabled);
+  h += trow('Show Only Once','Save completion and skip onboarding next launch','onboarding.showOnlyOnce',o.showOnlyOnce);
+  h += trow('Show Every Launch','Useful for demos and testing','onboarding.showEveryLaunch',o.showEveryLaunch);
+  h += trow('Allow Skip','Show a skip button in the top corner','onboarding.allowSkip',o.allowSkip);
+  h += trow('Show Page Indicators','Show progress dots under the pages','onboarding.showIndicators',o.showIndicators);
+  h += trow('Request Push on Finish','Ask for notification permission after onboarding finishes','onboarding.requestPushOnFinish',o.requestPushOnFinish);
+  h += '</div><div class="fg" style="margin-top:16px">';
+  h += fmi('Primary Button Title','onbPrimary','onboarding.primaryButtonTitle',o.primaryButtonTitle,'Continue','Used on normal pages');
+  h += fmi('Skip Button Title','onbSkip','onboarding.skipButtonTitle',o.skipButtonTitle,'Skip','Used when skipping is allowed');
+  h += fmi('Finish Button Title','onbFinish','onboarding.finishButtonTitle',o.finishButtonTitle,'Get Started','Used on the final page');
+  h += '</div></div>';
+
+  h += '<div class="card"><div class="card-t">Onboarding Pages</div>'+sfSymbolPicker()+'<div id="onboardingPageList">';
+  for(var i=0;i<o.pages.length;i++){
+    h += rOnboardingPageCard(o.pages[i],i);
+  }
+  h += '</div><button class="btn-add" id="btnAddOnboardingPage"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> Add Page</button>';
+  h += '<div class="ban info" style="margin-top:14px"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.3"/><path d="M8 5v3.5M8 10.5v.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg> Recommended: 2-4 pages with short titles, clear subtitles, and clear SF Symbol icons.</div></div>';
+  return h;
+}
+
+function rOnboardingPageCard(p,i){
+  return '<div class="tc" data-onb-id="'+p.id+'">'+
+    '<div class="tc-hd"><span class="tc-lbl">Page '+(i+1)+'</span><div class="tc-acts">'+
+      '<button class="btn-i" data-moveonb="'+p.id+'" data-dir="-1" title="Move up"'+(i===0?' disabled':'')+'><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 8l4-4 4 4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>'+
+      '<button class="btn-i" data-moveonb="'+p.id+'" data-dir="1" title="Move down"'+(i===cfg.onboarding.pages.length-1?' disabled':'')+'><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>'+
+      '<button class="btn-i dng" data-delonb="'+p.id+'" title="Remove"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 2l8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></button>'+
+    '</div></div>'+
+    '<div class="tc-g">'+
+      '<div class="fmi"><label class="fl">Title <span class="rq">*</span></label><input class="fi" data-onbf="title" data-onbid="'+p.id+'" value="'+esc(p.title)+'" placeholder="Welcome"></div>'+
+      '<div class="fmi"><label class="fl">SF Symbol <span class="rq">*</span></label><input class="fi" data-onbf="icon" data-onbid="'+p.id+'" value="'+esc(p.icon)+'" placeholder="sparkles"><span class="fh">Type an exact built-in iOS icon name, or click one of the icon chips above.</span></div>'+
+      '<div class="fmi"><label class="fl">Button Title</label><input class="fi" data-onbf="buttonTitle" data-onbid="'+p.id+'" value="'+esc(p.buttonTitle||'')+'" placeholder="Optional"></div>'+
+      '<div class="fmi fu"><label class="fl">Subtitle</label><textarea class="fta" data-onbf="subtitle" data-onbid="'+p.id+'" rows="3" placeholder="Short buyer-friendly message">'+esc(p.subtitle)+'</textarea></div>'+
+    '</div></div>';
+}
+
+/* ─── Theme ─── */
+function rTheme(){
+  var t = cfg.theme;
+  var modeOpts = opt('system','System (Auto)',t.mode)+opt('light','Light Only',t.mode)+opt('dark','Dark Only',t.mode);
+  return '<div class="desc">Customize the visual appearance. The primary color affects the tab bar, navigation bar tint, and interactive elements.</div>'+
+  '<div class="card"><div class="card-t">Appearance</div><div class="fg">'+
+    '<div class="fmi"><label class="fl">Primary Color</label><div class="color-row">'+
+      '<div class="csw" style="background:'+esc(t.primaryColor)+'"><input type="color" data-path="theme.primaryColor" value="'+esc(t.primaryColor)+'"></div>'+
+      '<input class="fi" data-path="theme.primaryColor" value="'+esc(t.primaryColor)+'" style="flex:1" placeholder="#D9622B">'+
+    '</div><span class="fh">Tab bar tint, buttons, and interactive elements</span></div>'+
+    '<div class="fmi"><label class="fl">Color Mode</label><select class="fs" data-path="theme.mode">'+modeOpts+'</select><span class="fh">System follows device appearance setting</span></div>'+
+    '<div class="fmi fu"><label class="fl">Dark Mode CSS Injection <span class="ht">(optional)</span></label>'+
+    '<textarea class="fta" data-path="theme.darkCss" rows="5" placeholder="body { background: #1a1a2e; color: #e0e0e0; }">'+esc(t.darkCss)+'</textarea>'+
+    '<span class="fh">Custom CSS injected in dark mode. Overrides website styles.</span></div>'+
+  '</div></div>';
+}
+
+/* ─── QR Scanner ─── */
+function rQR(){
+  var q = cfg.qr;
+  var h = '<div class="desc">Configure the optional native QR Scanner. It uses the iPhone camera through AVFoundation, works best on a real iPhone, and requires a clear camera permission reason before App Store submission.</div>';
+  h += '<div class="card"><div class="card-t">Native QR Scanner</div><div class="fgrid">';
+  h += trow('Enable QR Scanner','Show Scan QR Code in Action Center and allow the scanQRCode bridge action','qr.enabled',q.enabled);
+  h += trow('Open Internal URLs Inside App','Trusted domains open directly in the WebView','qr.openInternalInApp',q.openInternalInApp);
+  h += trow('Open External URLs in Safari','External links open outside the WebView when allowed','qr.openExternalInSafari',q.openExternalInSafari);
+  h += trow('Copy Plain Text Result','Show a Copy button when QR content is text','qr.copyPlainTextResult',q.copyPlainTextResult);
+  h += trow('Allowed Domains Only','Block unknown domains from opening automatically','qr.allowedDomainsOnly',q.allowedDomainsOnly);
+  h += trow('Show Result Before Opening','Show a native confirmation screen before opening scanned URLs','qr.showResultBeforeOpening',q.showResultBeforeOpening);
+  h += '</div><div class="fg" style="margin-top:16px">';
+  h += '<div class="fmi fu"><label class="fl">Camera Permission Message</label><textarea class="fta" data-path="qr.cameraPermissionMessage" rows="3" placeholder="Camera access is needed to scan QR codes.">'+esc(q.cameraPermissionMessage)+'</textarea><span class="fh">Shown when camera permission is denied or unavailable. Also use a clear camera reason in Info.plist.</span></div>';
+  h += '</div></div>';
+  h += '<div class="ban warning" style="margin-top:14px"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 1.5L1.5 13h13L8 1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M8 6v3M8 11v.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg> QR Scanner requires <strong>NSCameraUsageDescription</strong>. Test scanning on a real iPhone before App Store submission.</div>';
+  return h;
+}
+
+/* ─── AdMob ─── */
+function rAdmob(){
+  var a = cfg.admob;
+  var h = '<div class="desc">Configure Google AdMob monetization. Leave blank if you don\'t want ads.</div>';
+  h += '<div class="card"><div class="card-t">AdMob Configuration</div>';
+  h += trow('Enable AdMob','Turn on Google AdMob advertising','admob.enabled',a.enabled);
+  h += '<div id="adFields" style="'+(a.enabled?'':'opacity:.4;pointer-events:none')+'">';
+  h += trow('Banner Ads','Display banner ads at the bottom','admob.banner',a.banner);
+  h += trow('Interstitial Ads','Full-screen ads between navigations','admob.interstitial',a.interstitial);
+  h += trow('UMP Consent','Enable Google User Messaging Platform consent flow','admob.umpConsent',a.umpConsent);
+  h += trow('Use Test Ad Unit IDs','Use Google test IDs while developing','admob.useTestIds',a.useTestIds);
+  h += trow('Show Banner on Main WebView','Render banner ads under the main WebView','admob.showBannerOnMain',a.showBannerOnMain);
+  h += trow('Show Interstitial on Launch','Try to show an interstitial after launch','admob.showInterstitialOnLaunch',a.showInterstitialOnLaunch);
+  h += '<div class="fg" style="margin-top:14px">';
+  h += fmi('AdMob App ID','adAppId','admob.appId',a.appId,'ca-app-pub-XXXXXXX~YYYYYYY','Find in AdMob console. Must start with ca-app-pub-');
+  h += fmi('Banner Ad Unit ID','banId','admob.bannerAdUnitId',a.bannerAdUnitId,'ca-app-pub-XXXXXXX/ZZZZZZZ','');
+  h += fmi('Interstitial Ad Unit ID','intId','admob.interstitialAdUnitId',a.interstitialAdUnitId,'ca-app-pub-XXXXXXX/ZZZZZZZ','');
+  h += fmi('Show Interstitial After','intNav','admob.interstitialAfterNavCount',String(a.interstitialAfterNavCount),'5','Page navigations between interstitial ads',null,false);
+  h += fmi('Interstitial Cooldown','intCooldown','admob.interstitialCooldownSeconds',String(a.interstitialCooldownSeconds||45),'45','Minimum seconds between interstitial presentations',null,false);
+  h += '<div class="fmi fu"><label class="fl">Excluded URL Patterns</label><textarea class="fta" data-path="admob.excludedPatterns" rows="3" placeholder="/checkout&#10;/payment">'+esc(a.excludedPatterns)+'</textarea><span class="fh">Interstitial ads are skipped when the current URL contains one of these patterns.</span></div>';
+  h += '</div></div></div>';
+  if(a.enabled && !a.appId){
+    h += '<div class="ban warning" style="margin-top:14px"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M8 1.5L1.5 13h13L8 1.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M8 6v3M8 11v.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg> AdMob is enabled but no App ID is set. The app will crash on launch without a valid App ID.</div>';
+  }
+  return h;
+}
+
+/* ─── Push ─── */
+function rPush(){
+  var p = cfg.push;
+  var h = '<div class="desc">Configure the Firebase Cloud Messaging flags that are actually used by CodixPushService.swift.</div>';
+  h += '<div class="card"><div class="card-t">Push Notifications</div>';
+  h += trow('Enable Push Notifications','Allow the app to receive remote push notifications','push.enabled',p.enabled);
+  h += '<div id="pushFields" style="'+(p.enabled?'':'opacity:.4;pointer-events:none')+'">';
+  h += trow('Enable Firebase Cloud Messaging','Use FirebaseCore and FirebaseMessaging integration','push.firebaseEnabled',p.firebaseEnabled);
+  h += trow('Request Permission on Launch','Ask for notification permission when the app starts','push.requestOnLaunch',p.requestOnLaunch);
+  h += trow('Show Foreground Notifications','Show banner/list/sound while app is open','push.foregroundNotifications',p.foregroundNotifications);
+  h += trow('Push Token Debug Logs','Print FCM token in DEBUG builds only','push.tokenDebugLogs',p.tokenDebugLogs);
+  h += trow('Use GoogleService-Info.plist','Recommended Firebase configuration method','push.useGoogleServicePlist',p.useGoogleServicePlist);
+  h += '<div class="fg" style="margin-top:14px">';
+  h += fmi('Google App ID','fbAppId','push.firebaseGoogleAppID',p.firebaseGoogleAppID,'1:1234567890:ios:abcdef','Required only when not using GoogleService-Info.plist');
+  h += fmi('GCM Sender ID','fbSender','push.firebaseGCMSenderID',p.firebaseGCMSenderID,'1234567890','Required only when not using GoogleService-Info.plist');
+  h += fmi('API Key','fbApi','push.firebaseAPIKey',p.firebaseAPIKey,'AIza...','Optional manual Firebase value');
+  h += fmi('Project ID','fbProject','push.firebaseProjectID',p.firebaseProjectID,'your-firebase-project','Optional manual Firebase value');
+  h += fmi('Bundle ID','fbBundle','push.firebaseBundleID',p.firebaseBundleID,cfg.appInfo.bundleId,'Optional manual Firebase value');
+  h += fmi('Client ID','fbClient','push.firebaseClientID',p.firebaseClientID,'','Optional manual Firebase value');
+  h += fmi('Database URL','fbDb','push.firebaseDatabaseURL',p.firebaseDatabaseURL,'https://project.firebaseio.com','Optional manual Firebase value');
+  h += fmi('Storage Bucket','fbBucket','push.firebaseStorageBucket',p.firebaseStorageBucket,'project.appspot.com','Optional manual Firebase value');
+  h += '</div></div></div>';
+  return h;
+}
+
+/* ─── Readiness ─── */
+function rReady(){
+  return '<div class="desc">Check your configuration against Apple\'s App Store requirements and best practices.</div><div id="readyCt"></div>';
+}
+
+function updateReady(){
+  var el = document.getElementById('readyCt');
+  if(!el) return;
+  var r = calcScore();
+  var circ = 2*Math.PI*54;
+  var off = circ-(r.score/100)*circ;
+  var sc = r.score>=80?'#22C55E':r.score>=60?'#F59E0B':'#EF4444';
+  var gr = r.score>=80?'Ready for Submission':r.score>=60?'Almost Ready':'Needs Work';
+
+  var h = '<div class="score-sec"><div class="sg"><svg viewBox="0 0 120 120"><circle class="sg-bg" cx="60" cy="60" r="54"/><circle class="sg-fl" cx="60" cy="60" r="54" stroke="'+sc+'" stroke-dasharray="'+circ+'" stroke-dashoffset="'+off+'"/></svg><div class="sg-tx"><div class="sg-n" style="color:'+sc+'">'+r.score+'</div><div class="sg-lb">out of 100</div></div></div>';
+  h += '<div class="si2"><div class="sg-gr" style="color:'+sc+'">'+gr+'</div><div class="sg-su">'+r.summary+'</div></div></div>';
+
+  for(var g=0;g<r.groups.length;g++){
+    h += '<div class="card" style="margin-bottom:12px"><div class="card-t">'+r.groups[g].title+'</div>';
+    for(var i=0;i<r.groups[g].items.length;i++){
+      var it = r.groups[g].items[i];
+      var ic = it.s==='pass'?'&#10003;':it.s==='warn'?'!':'&#10007;';
+      h += '<div class="cli '+it.s+'"><div class="cli-i">'+ic+'</div><div>'+it.t+'</div></div>';
+    }
+    h += '</div>';
+  }
+  el.innerHTML = h;
+}
+
+function calcScore(){
+  var score=0;
+  var groups=[];
+  var c=cfg;
+
+  /* Required */
+  var req=[];
+  if(c.appInfo.appName){score+=5;req.push({s:'pass',t:'<strong>App Name</strong> is set'});}
+  else req.push({s:'fail',t:'<strong>App Name</strong> is missing — required for App Store'});
+
+  if(/^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*){2,}$/.test(c.appInfo.bundleId)){score+=5;req.push({s:'pass',t:'<strong>Bundle ID</strong> format is valid'});}
+  else req.push({s:'warn',t:'<strong>Bundle ID</strong> may be invalid — use reverse domain (com.company.app)'});
+
+  if(/^\d+\.\d+\.\d+$/.test(c.appInfo.version)){score+=5;req.push({s:'pass',t:'<strong>Version</strong> follows semantic versioning'});}
+  else req.push({s:'warn',t:'<strong>Version</strong> should use X.Y.Z format'});
+
+  if(c.appInfo.supportEmail&&/\S+@\S+\.\S+/.test(c.appInfo.supportEmail)){score+=5;req.push({s:'pass',t:'<strong>Support Email</strong> is provided'});}
+  else req.push({s:'fail',t:'<strong>Support Email</strong> is missing — required by Apple'});
+
+  if(c.appInfo.privacyPolicyUrl){score+=10;req.push({s:'pass',t:'<strong>Privacy Policy URL</strong> is provided'});}
+  else req.push({s:'fail',t:'<strong>Privacy Policy URL</strong> is missing — Apple requires this'});
+
+  if(c.appInfo.termsUrl){score+=8;req.push({s:'pass',t:'<strong>Terms of Service URL</strong> is provided'});}
+  else req.push({s:'warn',t:'<strong>Terms of Service URL</strong> is missing — recommended'});
+
+  if(c.appInfo.appLogoAssetName && c.appInfo.appLogoAssetName.trim()){
+    req.push({s:'pass',t:'<strong>In-app logo asset</strong> is set to <code>'+esc(c.appInfo.appLogoAssetName.trim())+'</code>'});
+  }else{
+    req.push({s:'warn',t:'<strong>In-app logo asset</strong> is empty — Codix will use <code>AppLogo</code>. The name must match the Image Set name exactly. AppLogo is for in-app branding; AppIcon is for the iPhone Home Screen.'});
+  }
+
+  if(c.website.mainUrl&&/^https:\/\//.test(c.website.mainUrl)){score+=10;req.push({s:'pass',t:'<strong>Main URL</strong> uses HTTPS'});}
+  else if(c.website.mainUrl){req.push({s:'warn',t:'<strong>Main URL</strong> should use HTTPS'});}
+  else req.push({s:'fail',t:'<strong>Main URL</strong> is missing'});
+
+  if(c.website.useBundledDemoLab){req.push({s:'warn',t:'<strong>Demo Lab</strong> is enabled — great for testing, but turn it off before App Store release'});}
+
+  groups.push({title:'Required for App Store',items:req});
+
+  /* Recommended */
+  var rec=[];
+  if(c.website.enableOfflineScreen){score+=8;rec.push({s:'pass',t:'<strong>Offline screen</strong> is enabled'});}
+  else rec.push({s:'warn',t:'<strong>Offline screen</strong> is disabled — users see blank page without network'});
+
+  if(c.website.enableLocalFallback){score+=5;rec.push({s:'pass',t:'<strong>Local HTML fallback</strong> is enabled'});}
+  else rec.push({s:'warn',t:'<strong>Local HTML fallback</strong> improves offline experience'});
+
+  if(c.website.useBundledDemoLab){score+=5;rec.push({s:'pass',t:'<strong>Bundled Demo Lab</strong> is ready for reviewer/buyer testing'});}
+
+  if(c.features.bottomTabs){score+=5;rec.push({s:'pass',t:'<strong>Bottom tab bar</strong> provides native navigation'});}
+  else rec.push({s:'warn',t:'<strong>Bottom tab bar</strong> makes the app feel more native'});
+
+  if(c.features.deepLinks){score+=4;rec.push({s:'pass',t:'<strong>Deep links</strong> are enabled'});}
+  else rec.push({s:'warn',t:'<strong>Deep links</strong> improve user engagement'});
+
+  if(c.features.nativeSplash){score+=4;rec.push({s:'pass',t:'<strong>Native splash</strong> is enabled'});}
+  else rec.push({s:'warn',t:'<strong>Native splash</strong> is disabled'});
+
+  if(c.onboarding.enabled&&c.onboarding.pages.length>0){score+=6;rec.push({s:'pass',t:'<strong>Native onboarding</strong> improves the app-like first launch experience'});}
+  else rec.push({s:'warn',t:'Enable native onboarding for a more premium buyer-ready app feel'});
+
+  if(c.onboarding.enabled&&(c.onboarding.pages.length<2||c.onboarding.pages.length>4)){
+    rec.push({s:'warn',t:'Recommended onboarding length is 2-4 pages'});
+  }
+
+  if(c.qr.enabled){score+=4;rec.push({s:'pass',t:'<strong>Native QR Scanner</strong> is enabled for app-like utility'});}
+  else rec.push({s:'warn',t:'Enable native QR scanning if your app needs ticket, product, coupon, or link scanning'});
+
+  if(c.tabs.length>=2){score+=5;rec.push({s:'pass',t:'<strong>'+c.tabs.length+' tabs</strong> configured'});}
+  else rec.push({s:'warn',t:'Add more tabs for better navigation'});
+
+  groups.push({title:'Recommended',items:rec});
+
+  /* AdMob */
+  var ad=[];
+  if(!c.admob.enabled){score+=5;ad.push({s:'pass',t:'AdMob disabled — no ad config needed'});}
+  else if(c.admob.appId&&c.admob.appId.indexOf('ca-app-pub-')===0){score+=5;ad.push({s:'pass',t:'<strong>AdMob App ID</strong> is configured'});}
+  else if(c.admob.enabled){ad.push({s:'fail',t:'<strong>AdMob App ID</strong> missing — app will crash'});}
+
+  if(c.admob.enabled&&c.admob.banner&&!c.admob.bannerAdUnitId){ad.push({s:'warn',t:'<strong>Banner ad unit ID</strong> is missing'});}
+  if(c.admob.enabled&&c.admob.interstitial&&!c.admob.interstitialAdUnitId){ad.push({s:'warn',t:'<strong>Interstitial ad unit ID</strong> is missing'});}
+  if(ad.length) groups.push({title:'AdMob',items:ad});
+
+  /* Push */
+  var pu=[];
+  if(!c.push.enabled){score+=3;pu.push({s:'pass',t:'Push disabled — no config needed'});}
+  else if(c.push.firebaseEnabled&&c.push.useGoogleServicePlist){score+=3;pu.push({s:'pass',t:'Firebase push will use <strong>GoogleService-Info.plist</strong>'});}
+  else if(c.push.firebaseEnabled&&c.push.firebaseGoogleAppID&&c.push.firebaseGCMSenderID){score+=3;pu.push({s:'pass',t:'Manual Firebase values are configured'});}
+  else{pu.push({s:'warn',t:'Firebase push needs GoogleService-Info.plist or manual Google App ID + Sender ID'});}
+  if(pu.length) groups.push({title:'Push Notifications',items:pu});
+
+  /* Production */
+  var pr=[];
+  if(!c.features.debugLogs){score+=5;pr.push({s:'pass',t:'<strong>Debug logs</strong> are disabled'});}
+  else pr.push({s:'fail',t:'<strong>Debug logs</strong> enabled — must disable before App Store'});
+
+  if(c.theme.mode!=='light'){pr.push({s:'pass',t:'<strong>Dark mode</strong> support is configured'});}
+  else pr.push({s:'warn',t:'Consider supporting dark mode'});
+
+  if(c.qr.enabled){
+    if(c.qr.cameraPermissionMessage&&c.qr.cameraPermissionMessage.trim()){
+      pr.push({s:'pass',t:'<strong>QR camera permission message</strong> is provided'});
+    }else{
+      pr.push({s:'fail',t:'QR Scanner is enabled but the camera permission message is missing'});
+    }
+    pr.push({s:'warn',t:'Test QR Scanner on a real iPhone. The simulator cannot scan real camera input.'});
+  }
+
+  groups.push({title:'Production Readiness',items:pr});
+
+  score=Math.min(100,score);
+  var summary = score>=80?'Your app is well-configured and ready for App Store submission. Review any remaining warnings.'
+    :score>=60?'Almost ready. Address the required items before submitting.'
+    :'Several issues need attention. Focus on the required items first.';
+
+  return {score:score,groups:groups,summary:summary};
+}
+
+/* ─── Generate ─── */
+function rGen(){
+  var tabs = '';
+  for(var i=0;i<FILES.length;i++){
+    tabs += '<button class="ftab'+(i===0?' on':'')+'" data-fi="'+i+'">'+FILES[i].name+'</button>';
+  }
+  return '<div class="desc">Review and download generated configuration files. Copy individual files or download everything.</div>'+
+  '<div class="card" style="padding:0;overflow:hidden"><div class="ftabs" id="ftabs">'+tabs+'</div>'+
+  '<div class="cwrap"><div class="cacts"><button class="cab" id="btnCopy">Copy</button><button class="cab dl" id="btnDl">Download</button></div>'+
+  '<pre class="cpre" id="codeOut"></pre></div></div>'+
+  '<div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">'+
+  '<button class="btn btn-p" id="btnDlAll"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v8M4 7l3 3 3-3M2 12h10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg> Download All Files</button>'+
+  '<button class="btn btn-s" id="btnCopyAll"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="3" y="3" width="8" height="9" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5 3V2.5A1.5 1.5 0 016.5 1h1A1.5 1.5 0 019 2.5V3" stroke="currentColor" stroke-width="1.2"/></svg> Copy All to Clipboard</button>'+
+  '</div>';
+}
+
+function showFile(idx){
+  curFile = idx;
+  var tabs = document.querySelectorAll('.ftab');
+  for(var i=0;i<tabs.length;i++){
+    tabs[i].className = 'ftab'+(i===idx?' on':'');
+  }
+  var code = genFile(idx);
+  var out = document.getElementById('codeOut');
+  if(out) out.innerHTML = hlSwift(code);
+}
+
+function genFile(idx){
+  return FILES[idx] ? FILES[idx].gen() : '';
+}
+
+/* ============================================================
+   CODE GENERATION
+   ============================================================ */
+function swiftString(v){
+  return '"'+String(v||'').replace(/\\/g,'\\\\').replace(/"/g,'\\"').replace(/\n/g,'\\n')+'"';
+}
+
+function swiftMultiline(v){
+  var s = String(v||'');
+  if(!s.trim()) return '""';
+  return '"""\n'+s.replace(/\\/g,'\\\\').replace(/"""/g,'\\"""')+'\n"""';
+}
+
+function swiftArrayFromLines(v){
+  var lines = String(v||'').split('\n');
+  var seen = {};
+  var out = [];
+  for(var i=0;i<lines.length;i++){
+    var item = normalizeDomainInput(lines[i]);
+    if(!item || seen[item]) continue;
+    seen[item] = true;
+    out.push(swiftString(item));
+  }
+  return '['+out.join(', ')+']';
+}
+
+function brandingLogoName(){
+  var raw = cfg && cfg.appInfo ? String(cfg.appInfo.appLogoAssetName || '').trim() : '';
+  return raw || 'AppLogo';
+}
+
+function normalizeDomainInput(v){
+  var item = String(v||'').trim().toLowerCase();
+  if(!item) return '';
+  item = item.replace(/^https?:\/\//,'').replace(/^www\./,'').split('/')[0].split(':')[0];
+  return item;
+}
+
+function hexToSwiftColor(hex){
+  var raw = String(hex||'#0D59F2').replace('#','').trim();
+  if(raw.length===3) raw = raw[0]+raw[0]+raw[1]+raw[1]+raw[2]+raw[2];
+  if(!/^[0-9a-fA-F]{6}$/.test(raw)) raw = '0D59F2';
+  function part(i){
+    return (parseInt(raw.substr(i,2),16)/255).toFixed(3).replace(/0+$/,'').replace(/\.$/,'');
+  }
+  return 'Color(red: '+part(0)+', green: '+part(2)+', blue: '+part(4)+')';
+}
+
+function tabSwift(t){
+  var title = swiftString(t.title || 'Tab');
+  var icon = swiftString(t.icon || 'circle');
+  var type = t.type==='settings' ? 'settings' : t.type==='action' ? 'action' : 'web';
+  if(type==='settings' || type==='action'){
+    return '        AppTab(title: '+title+', icon: '+icon+', type: .'+type+')';
+  }
+  var path = t.url || '/';
+  if(/^https?:\/\//i.test(path)){
+    return '        AppTab(title: '+title+', icon: '+icon+', fullURLString: '+swiftString(path)+')';
+  }
+  return '        AppTab(title: '+title+', icon: '+icon+', path: '+swiftString(path)+')';
+}
+
+function onboardingPageSwift(p){
+  var parts = [
+    'title: '+swiftString(p.title || 'Welcome'),
+    'subtitle: '+swiftString(p.subtitle || ''),
+    'systemImage: '+swiftString(p.icon || 'sparkles')
+  ];
+  if(p.buttonTitle&&p.buttonTitle.trim()){
+    parts.push('buttonTitle: '+swiftString(p.buttonTitle.trim()));
+  }
+  return '        CodixOnboardingPage(\n            '+parts.join(',\n            ')+'\n        )';
+}
+
+function genAppCfg(){
+  var c=cfg;
+  var ppUrl = c.appInfo.privacyPolicyUrl || '';
+  var tmUrl = c.appInfo.termsUrl || '';
+  var adAppId = c.admob.appId || 'ca-app-pub-3940256099942544~1458002511';
+  var adBanId = c.admob.bannerAdUnitId || 'ca-app-pub-3940256099942544/2435281174';
+  var adIntId = c.admob.interstitialAdUnitId || 'ca-app-pub-3940256099942544/4411468910';
+  var tabs = [];
+  for(var i=0;i<c.tabs.length;i++) tabs.push(tabSwift(c.tabs[i])+(i<c.tabs.length-1?',':''));
+  var onboardingPages = [];
+  for(var j=0;j<c.onboarding.pages.length;j++) onboardingPages.push(onboardingPageSwift(c.onboarding.pages[j])+(j<c.onboarding.pages.length-1?',':''));
+
+  var s = '//\n';
+  s += '//  CodixConfig.swift\n';
+  s += '//  '+c.appInfo.appName+'\n';
+  s += '//\n';
+  s += '//  Generated by Codix Configuration Builder\n';
+  s += '//  '+dateStr()+'\n';
+  s += '//\n\n';
+  s += 'import SwiftUI\n\n';
+  s += 'enum AppThemeMode: String, CaseIterable, Identifiable {\n';
+  s += '    case system\n';
+  s += '    case light\n';
+  s += '    case dark\n\n';
+  s += '    var id: String { rawValue }\n\n';
+  s += '    var colorScheme: ColorScheme? {\n';
+  s += '        switch self {\n';
+  s += '        case .system:\n';
+  s += '            return nil\n';
+  s += '        case .light:\n';
+  s += '            return .light\n';
+  s += '        case .dark:\n';
+  s += '            return .dark\n';
+  s += '        }\n';
+  s += '    }\n\n';
+  s += '    var displayName: String {\n';
+  s += '        rawValue.capitalized\n';
+  s += '    }\n';
+  s += '}\n\n';
+  s += 'enum AppTabType: Hashable {\n';
+  s += '    case web\n';
+  s += '    case settings\n';
+  s += '    case action\n';
+  s += '}\n\n';
+  s += 'struct AppTab: Identifiable, Hashable {\n';
+  s += '    let title: String\n';
+  s += '    let systemIcon: String\n';
+  s += '    let urlPath: String?\n';
+  s += '    let fullURLString: String?\n';
+  s += '    let type: AppTabType\n\n';
+  s += '    var id: String { "\\(title)-\\(systemIcon)" }\n\n';
+  s += '    init(title: String, icon: String, path: String, type: AppTabType = .web) {\n';
+  s += '        self.title = title\n';
+  s += '        self.systemIcon = icon\n';
+  s += '        self.urlPath = path\n';
+  s += '        self.fullURLString = nil\n';
+  s += '        self.type = type\n';
+  s += '    }\n\n';
+  s += '    init(title: String, icon: String, fullURLString: String, type: AppTabType = .web) {\n';
+  s += '        self.title = title\n';
+  s += '        self.systemIcon = icon\n';
+  s += '        self.urlPath = nil\n';
+  s += '        self.fullURLString = fullURLString\n';
+  s += '        self.type = type\n';
+  s += '    }\n\n';
+  s += '    init(title: String, icon: String, type: AppTabType) {\n';
+  s += '        self.title = title\n';
+  s += '        self.systemIcon = icon\n';
+  s += '        self.urlPath = nil\n';
+  s += '        self.fullURLString = nil\n';
+  s += '        self.type = type\n';
+  s += '    }\n\n';
+  s += '    var url: URL? {\n';
+  s += '        if let fullURLString, let fullURL = URL(string: fullURLString) {\n';
+  s += '            return fullURL\n';
+  s += '        }\n\n';
+  s += '        guard let urlPath else {\n';
+  s += '            return nil\n';
+  s += '        }\n\n';
+  s += '        return AppConfig.url(for: urlPath)\n';
+  s += '    }\n';
+  s += '}\n\n';
+  s += 'struct CodixOnboardingPage: Identifiable, Hashable {\n';
+  s += '    let title: String\n';
+  s += '    let subtitle: String\n';
+  s += '    let systemImage: String\n';
+  s += '    let buttonTitle: String?\n\n';
+  s += '    var id: String { "\\(title)-\\(systemImage)" }\n\n';
+  s += '    init(title: String, subtitle: String, systemImage: String, buttonTitle: String? = nil) {\n';
+  s += '        self.title = title\n';
+  s += '        self.subtitle = subtitle\n';
+  s += '        self.systemImage = systemImage\n';
+  s += '        self.buttonTitle = buttonTitle\n';
+  s += '    }\n';
+  s += '}\n\n';
+  s += 'enum AppConfig {\n';
+  s += '    // MARK: - Buyer editable app settings\n\n';
+  s += '    static let appName = '+swiftString(c.appInfo.appName)+'\n';
+  s += '    static let websiteURLString = '+swiftString(c.website.mainUrl)+'\n';
+  s += '    static let websiteURL = URL(string: websiteURLString) ?? URL(fileURLWithPath: "/")\n\n';
+  s += '    // Keep true while testing the template. Set false before release to load your real websiteURLString.\n';
+  s += '    static let useBundledDemoLab = '+c.website.useBundledDemoLab+'\n\n';
+  s += '    // The bundled Demo Lab is copied inside Resources/LocalHTML/Codix_Demo_Lab.\n';
+  s += '    static var bundledDemoLabURL: URL? {\n';
+  s += '        let subdirectories = [\n';
+  s += '            "Resources/LocalHTML/Codix_Demo_Lab",\n';
+  s += '            "LocalHTML/Codix_Demo_Lab",\n';
+  s += '            "Codix_Demo_Lab"\n';
+  s += '        ]\n\n';
+  s += '        for subdirectory in subdirectories {\n';
+  s += '            if let url = Bundle.main.url(forResource: "index", withExtension: "html", subdirectory: subdirectory) {\n';
+  s += '                return url\n';
+  s += '            }\n';
+  s += '        }\n\n';
+  s += '        return nil\n';
+  s += '    }\n\n';
+  s += '    static var appLaunchURL: URL {\n';
+  s += '        if useBundledDemoLab, let demoLabURL = bundledDemoLabURL {\n';
+  s += '            return demoLabURL\n';
+  s += '        }\n\n';
+  s += '        return websiteURL\n';
+  s += '    }\n\n';
+  s += '    // Add your real support, privacy, and terms links before publishing.\n';
+  s += '    // If privacyPolicyURLString is empty, the app shows a friendly setup reminder.\n';
+  s += '    static let supportEmail = '+swiftString(c.appInfo.supportEmail)+'\n';
+  s += '    static let privacyPolicyURLString = '+swiftString(ppUrl)+'\n';
+  s += '    static let termsURLString = '+swiftString(tmUrl)+'\n\n';
+  s += '    // MARK: - Branding\n\n';
+  s += '    // AppLogo is used inside the app, such as the splash screen and About screen.\n';
+  s += '    // It must match an Image Set name inside Assets.xcassets exactly. AppIcon is separate.\n';
+  s += '    static let appLogoAssetName = '+swiftString(brandingLogoName())+'\n';
+  s += '    static let showLogoOnSplashScreen = '+c.appInfo.showLogoOnSplashScreen+'\n';
+  s += '    static let showLogoOnAboutScreen = '+c.appInfo.showLogoOnAboutScreen+'\n\n';
+  s += '    // MARK: - Feature flags\n\n';
+  s += '    static let enableBottomTabs = '+c.features.bottomTabs+'\n';
+  s += '    static let enableThemeEngine = '+c.features.themeEngine+'\n';
+  s += '    static let enableDarkModeCSSInjection = '+c.features.darkModeCSSInjection+'\n';
+  s += '    static let enableFileUploads = '+c.features.fileUploads+'\n';
+  s += '    static let enableDownloads = '+c.features.downloads+'\n';
+  s += '    static let enableShare = '+c.features.share+'\n';
+  s += '    static let enableNativeActionCenter = '+c.features.nativeActionCenter+'\n';
+  s += '    static let enablePullToRefresh = '+c.features.pullToRefresh+'\n';
+  s += '    static let enableOfflineScreen = '+c.features.offlineScreen+'\n';
+  s += '    static let enableDeepLinks = '+c.features.deepLinks+'\n';
+  s += '    static let enableNativeBridge = '+c.features.nativeBridge+'\n';
+  s += '    static let enableSettingsScreen = '+c.features.settingsScreen+'\n';
+  s += '    static let enableDebugLogs = '+c.features.debugLogs+'\n';
+  s += '    static let enableNativeSplash = '+c.features.nativeSplash+'\n\n';
+  s += '    static var enableOfflinePage: Bool { enableOfflineScreen }\n\n';
+  s += '    // MARK: - Native Onboarding\n\n';
+  s += '    // Shows premium SwiftUI onboarding before the main WebView app.\n';
+  s += '    static let enableNativeOnboarding = '+c.onboarding.enabled+'\n\n';
+  s += '    // Keep true for production. Users see onboarding once, then continue directly to the app.\n';
+  s += '    static let showOnboardingOnlyOnce = '+c.onboarding.showOnlyOnce+'\n\n';
+  s += '    // Useful for demos and testing. When true, onboarding appears on every app launch.\n';
+  s += '    static let showOnboardingEveryLaunch = '+c.onboarding.showEveryLaunch+'\n\n';
+  s += '    static let allowSkipOnboarding = '+c.onboarding.allowSkip+'\n';
+  s += '    static let showPageIndicators = '+c.onboarding.showIndicators+'\n';
+  s += '    static let onboardingPrimaryButtonTitle = '+swiftString(c.onboarding.primaryButtonTitle || 'Continue')+'\n';
+  s += '    static let onboardingSkipButtonTitle = '+swiftString(c.onboarding.skipButtonTitle || 'Skip')+'\n';
+  s += '    static let onboardingFinishButtonTitle = '+swiftString(c.onboarding.finishButtonTitle || 'Get Started')+'\n\n';
+  s += '    // Optional hook. Requires push setup to be configured before it can request permission.\n';
+  s += '    static let onboardingRequestPushOnFinish = '+c.onboarding.requestPushOnFinish+'\n';
+  s += '    static let onboardingCompletionStorageKey = "codix.nativeOnboardingCompleted"\n\n';
+  s += "    // systemImage uses Apple's SF Symbols names, such as sparkles, house.fill, cart.fill, bell.badge.fill, or gearshape.fill.\n";
+  s += '    static let onboardingPages: [CodixOnboardingPage] = [\n';
+  s += onboardingPages.join('\n')+'\n';
+  s += '    ]\n\n';
+  s += '    // MARK: - Push and Ads\n\n';
+  s += '    // Firebase Cloud Messaging is optional. Buyers must add Firebase SDK,\n';
+  s += '    // GoogleService-Info.plist, and Apple Push capability before enabling.\n';
+  s += '    static let enablePushNotifications = '+c.push.enabled+'\n';
+  s += '    static let enableFirebaseCloudMessaging = '+c.push.firebaseEnabled+'\n';
+  s += '    static let requestPushPermissionOnLaunch = '+c.push.requestOnLaunch+'\n';
+  s += '    static let showForegroundPushNotifications = '+c.push.foregroundNotifications+'\n';
+  s += '    static let enablePushTokenDebugLogs = '+c.push.tokenDebugLogs+'\n\n';
+  s += '    static let useFirebaseGoogleServicePlist = '+c.push.useGoogleServicePlist+'\n';
+  s += '    static let firebaseGoogleAppID = '+swiftString(c.push.firebaseGoogleAppID)+'\n';
+  s += '    static let firebaseGCMSenderID = '+swiftString(c.push.firebaseGCMSenderID)+'\n';
+  s += '    static let firebaseAPIKey = '+swiftString(c.push.firebaseAPIKey)+'\n';
+  s += '    static let firebaseProjectID = '+swiftString(c.push.firebaseProjectID)+'\n';
+  s += '    static let firebaseBundleID = '+swiftString(c.push.firebaseBundleID)+'\n';
+  s += '    static let firebaseClientID = '+swiftString(c.push.firebaseClientID)+'\n';
+  s += '    static let firebaseDatabaseURL = '+swiftString(c.push.firebaseDatabaseURL)+'\n';
+  s += '    static let firebaseStorageBucket = '+swiftString(c.push.firebaseStorageBucket)+'\n\n';
+  s += '    static let enableAdMob = '+c.admob.enabled+'\n';
+  s += '    static let enableBannerAds = '+c.admob.banner+'\n';
+  s += '    static let enableInterstitialAds = '+c.admob.interstitial+'\n';
+  s += '    static let enableUMPConsent = '+c.admob.umpConsent+'\n';
+  s += '    static let useTestAdUnitIDs = '+c.admob.useTestIds+'\n\n';
+  s += '    // Replace these before release if you enable AdMob.\n';
+  s += '    static let admobApplicationID = '+swiftString(adAppId)+'\n';
+  s += '    static let bannerAdUnitID = '+swiftString(adBanId)+'\n';
+  s += '    static let interstitialAdUnitID = '+swiftString(adIntId)+'\n';
+  s += '    static let testAdMobApplicationID = "ca-app-pub-3940256099942544~1458002511"\n';
+  s += '    static let testBannerAdUnitID = "ca-app-pub-3940256099942544/2435281174"\n';
+  s += '    static let testInterstitialAdUnitID = "ca-app-pub-3940256099942544/4411468910"\n\n';
+  s += '    static var activeBannerAdUnitID: String {\n';
+  s += '        useTestAdUnitIDs ? testBannerAdUnitID : bannerAdUnitID\n';
+  s += '    }\n\n';
+  s += '    static var activeInterstitialAdUnitID: String {\n';
+  s += '        useTestAdUnitIDs ? testInterstitialAdUnitID : interstitialAdUnitID\n';
+  s += '    }\n\n';
+  s += '    static let showBannerOnMainWebView = '+c.admob.showBannerOnMain+'\n';
+  s += '    static let showInterstitialAfterNavigationCount = '+(parseInt(c.admob.interstitialAfterNavCount,10)||0)+'\n';
+  s += '    static let showInterstitialOnAppLaunch = '+c.admob.showInterstitialOnLaunch+'\n';
+  s += '    static let interstitialCooldownSeconds = '+(parseInt(c.admob.interstitialCooldownSeconds,10)||45)+'\n';
+  s += '    static let interstitialExcludedURLPatterns = '+swiftArrayFromLines(c.admob.excludedPatterns)+'\n\n';
+  s += '    // When true, user-tapped links outside internal domains open externally.\n';
+  s += '    static let externalLinksOpenInSafari = '+(c.website.externalLinks==='safari')+'\n\n';
+  s += '    // MARK: - Native QR Scanner\n\n';
+  s += '    // Enables the optional native QR scanner in the Action Center and native bridge.\n';
+  s += '    static let enableQRCodeScanner = '+c.qr.enabled+'\n\n';
+  s += '    // Trusted website QR codes can open directly inside the WebView.\n';
+  s += '    static let qrScannerOpenInternalURLsInApp = '+c.qr.openInternalInApp+'\n\n';
+  s += '    // External website QR codes open in Safari when allowed. They never open inside the WebView.\n';
+  s += '    static let qrScannerOpenExternalURLsInSafari = '+c.qr.openExternalInSafari+'\n\n';
+  s += '    // Plain text QR results can be copied from the native result screen.\n';
+  s += '    static let qrScannerCopyPlainTextResult = '+c.qr.copyPlainTextResult+'\n\n';
+  s += '    // Keep true for buyer safety. Only allowed/internal domains can open inside the app.\n';
+  s += '    static let qrScannerAllowedDomainsOnly = '+c.qr.allowedDomainsOnly+'\n\n';
+  s += '    // When true, show a native confirmation screen before opening URL results.\n';
+  s += '    static let qrScannerShowResultBeforeOpening = '+c.qr.showResultBeforeOpening+'\n\n';
+  s += '    // Shown when camera access is not available or the user denies permission.\n';
+  s += '    static let qrScannerCameraPermissionMessage = '+swiftString(c.qr.cameraPermissionMessage || 'Camera access is needed to scan QR codes. You can enable camera access in iOS Settings.')+'\n\n';
+  s += '    // MARK: - Theme\n\n';
+  s += '    static let themeMode: AppThemeMode = .'+c.theme.mode+'\n';
+  s += '    static let themeStorageKey = "codix.selectedThemeMode"\n';
+  s += '    static let primaryColor = '+hexToSwiftColor(c.theme.primaryColor)+'\n';
+  s += '    static let prefersLargeTitles = false\n\n';
+  s += '    static let injectDarkModeCSS = '+swiftMultiline(c.theme.darkCss || ':root { color-scheme: light dark; }\nhtml, body { background-color: Canvas; color: CanvasText; }')+'\n\n';
+  s += '    // MARK: - Tabs\n\n';
+  s += '    static let tabs: [AppTab] = [\n';
+  s += tabs.join('\n')+'\n';
+  s += '    ]\n\n';
+  s += '    // MARK: - Security and routing\n\n';
+  s += '    // The main website domain is read automatically from websiteURLString.\n';
+  s += '    // Add extra trusted domains here if they should also stay inside the WebView.\n';
+  s += '    static let allowedInternalDomains: [String] = '+swiftArrayFromLines(c.website.allowedDomains)+'\n\n';
+  s += '    static let deepLinkScheme = "codix"\n';
+  s += '    static let allowedDeepLinkHosts = ["open", "page", "product", "post"]\n\n';
+  s += '    static func url(for path: String) -> URL {\n';
+  s += '        if useBundledDemoLab {\n';
+  s += '            return appLaunchURL\n';
+  s += '        }\n\n';
+  s += '        guard !path.isEmpty, path != "/" else {\n';
+  s += '            return appLaunchURL\n';
+  s += '        }\n\n';
+  s += '        if let fullURL = URL(string: path), fullURL.scheme != nil {\n';
+  s += '            return fullURL\n';
+  s += '        }\n\n';
+  s += '        let normalizedPath = path.hasPrefix("/") ? String(path.dropFirst()) : path\n';
+  s += '        return websiteURL.appending(path: normalizedPath)\n';
+  s += '    }\n\n';
+  s += '    static var privacyPolicyURL: URL? {\n';
+  s += '        URL(string: privacyPolicyURLString).flatMap { $0.scheme == nil ? nil : $0 }\n';
+  s += '    }\n\n';
+  s += '    static var termsURL: URL? {\n';
+  s += '        URL(string: termsURLString).flatMap { $0.scheme == nil ? nil : $0 }\n';
+  s += '    }\n\n';
+  s += '    static var supportEmailURL: URL? {\n';
+  s += '        guard !supportEmail.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {\n';
+  s += '            return nil\n';
+  s += '        }\n';
+  s += '        return URL(string: "mailto:\\(supportEmail)")\n';
+  s += '    }\n\n';
+  s += '    static var appVersionString: String {\n';
+  s += '        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"\n';
+  s += '        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "11"\n';
+  s += '        return "\\(version) (\\(build))"\n';
+  s += '    }\n';
+  s += '}\n\n';
+  s += '// Backward-compatible alias for v0.1/v0.2 files and buyer customizations.\n';
+  s += 'typealias CodixConfig = AppConfig\n';
+  return s;
+}
+
+function genReview(){
+  var c=cfg;
+  var hasAds=c.admob.enabled;
+  var hasPush=c.push.enabled;
+  var s = 'APP REVIEW NOTES — '+c.appInfo.appName+'\n';
+  s += 'Generated by Codix Configuration Builder\n';
+  s += 'Date: '+dateStr()+'\n\n';
+  s += '════════════════════════════════════════\n';
+  s += 'COPY INTO APP STORE CONNECT\n';
+  s += '════════════════════════════════════════\n\n';
+  s += 'Thank you for reviewing our app.\n\n';
+  s += 'APP OVERVIEW\n';
+  s += 'App Name:   '+c.appInfo.appName+'\n';
+  s += 'Bundle ID:  '+c.appInfo.bundleId+'\n';
+  s += 'Version:    '+c.appInfo.version+'\n\n';
+  s += 'DESCRIPTION\n';
+  s += c.appInfo.appName+' is a WebView application providing mobile\n';
+  s += 'access to '+c.website.mainUrl+'. The app wraps the website\n';
+  s += 'in a native iOS container';
+  if(c.features.bottomTabs) s += ' with a bottom tab bar';
+  if(c.features.downloads) s += ', file download support';
+  if(c.features.fileUploads) s += ', file upload capability';
+  s += '.\n\n';
+  s += 'REVIEWER LOGIN\n';
+  s += 'No login is required to use this app.\n';
+  s += 'All content is publicly accessible.\n\n';
+  s += 'KEY FEATURES\n';
+  if(c.features.bottomTabs) s += '• Bottom tab navigation ('+c.tabs.length+' tabs)\n';
+  if(c.features.settingsScreen) s += '• Native iOS settings screen\n';
+  if(c.features.downloads) s += '• File download support\n';
+  if(c.features.fileUploads) s += '• Camera and photo library uploads\n';
+  if(c.features.deepLinks) s += '• Universal link support\n';
+  if(c.features.nativeSplash) s += '• Native launch/splash screen\n';
+  if(c.onboarding.enabled) s += '• Native onboarding ('+c.onboarding.pages.length+' pages)\n';
+  if(c.qr.enabled) s += '• Native QR scanner\n';
+  if(c.website.enableOfflineScreen) s += '• Offline detection with fallback\n';
+  s += '\n';
+  s += 'ADVERTISING\n';
+  if(hasAds){
+    s += 'This app uses Google AdMob.\n';
+    s += 'Banner ads: '+(c.admob.banner?'Yes':'No')+'\n';
+    s += 'Interstitial ads: '+(c.admob.interstitial?'Yes':'No')+'\n';
+    s += 'Interstitial cooldown: '+(parseInt(c.admob.interstitialCooldownSeconds,10)||45)+' seconds.\n';
+    s += 'Interstitial excluded patterns: '+(c.admob.excludedPatterns.trim().replace(/\n/g,', ') || 'None')+'.\n';
+  }else{
+    s += 'This app does not contain advertisements.\n';
+  }
+  s += '\nPUSH NOTIFICATIONS\n';
+  if(hasPush){
+    s += 'This app uses Firebase Cloud Messaging for push notifications.\n';
+    s += 'Purpose: Content updates and re-engagement.\n';
+    s += 'Users can manage preferences in iOS Settings.\n';
+  }else{
+    s += 'This app does not send push notifications.\n';
+  }
+  s += '\nPRIVACY\n';
+  s += 'Privacy Policy: '+(c.appInfo.privacyPolicyUrl||'Not configured')+'\n';
+  s += 'Terms: '+(c.appInfo.termsUrl||'Not configured')+'\n';
+  s += 'Support: '+c.appInfo.supportEmail+'\n';
+  if(c.features.debugLogs) s += '\nNOTE: Debug logging will be disabled before production.\n';
+  if(c.qr.enabled) s += '\nCAMERA PERMISSION\nThe QR Scanner uses the camera only when the user opens Scan QR Code. The app includes NSCameraUsageDescription and should be tested on a real iPhone.\n';
+  return s;
+}
+
+function genSummary(){
+  var c=cfg;
+  var sc=calcScore();
+  var s = 'SETUP SUMMARY — '+c.appInfo.appName+'\n';
+  s += 'Generated by Codix Configuration Builder\n';
+  s += 'Date: '+dateStr()+'\n\n';
+  s += '════════════════════════════════════════\n';
+  s += 'APP STORE READINESS: '+sc.score+'/100\n';
+  s += sc.score>=80?'STATUS: Ready for submission\n':sc.score>=60?'STATUS: Almost ready\n':'STATUS: Needs work\n';
+  s += '════════════════════════════════════════\n\n';
+  s += 'APP INFO\n';
+  s += '──────────────────────────────\n';
+  s += 'App Name:       '+c.appInfo.appName+'\n';
+  s += 'Bundle ID:      '+c.appInfo.bundleId+'\n';
+  s += 'Version:        '+c.appInfo.version+'\n';
+  s += 'Support Email:  '+c.appInfo.supportEmail+'\n';
+  s += 'Privacy Policy: '+(c.appInfo.privacyPolicyUrl||'(not set)')+'\n';
+  s += 'Terms URL:      '+(c.appInfo.termsUrl||'(not set)')+'\n\n';
+  s += 'BRANDING\n';
+  s += '──────────────────────────────\n';
+  s += 'AppLogo Asset:  '+brandingLogoName()+'\n';
+  s += 'Splash Logo:    '+(c.appInfo.showLogoOnSplashScreen?'Enabled':'Disabled')+'\n';
+  s += 'About Logo:     '+(c.appInfo.showLogoOnAboutScreen?'Enabled':'Disabled')+'\n';
+  s += 'Note: AppLogo is the in-app Image Set. AppIcon is the iPhone Home Screen icon.\n\n';
+  s += 'WEBSITE\n';
+  s += '──────────────────────────────\n';
+  s += 'Main URL:       '+c.website.mainUrl+'\n';
+  s += 'Demo Lab:       '+(c.website.useBundledDemoLab?'On - app opens bundled Demo Lab for testing':'Off - app opens Main URL')+'\n';
+  s += 'Domains:        '+c.website.allowedDomains.trim().replace(/\n/g,', ')+'\n';
+  s += 'External:       '+(c.website.externalLinks==='safari'?'Open in Safari':'Keep inside WebView')+'\n';
+  s += 'Local Fallback: '+(c.website.enableLocalFallback?'On':'Off')+'\n';
+  s += 'Offline Screen: '+(c.website.enableOfflineScreen?'On':'Off')+'\n\n';
+  s += 'TABS ('+c.tabs.length+')\n';
+  s += '──────────────────────────────\n';
+  for(var i=0;i<c.tabs.length;i++){
+    var t=c.tabs[i];
+    s += '  '+(i+1)+'. "'+t.title+'" — '+t.icon+' — '+t.type+(t.url?' — '+t.url:'')+'\n';
+  }
+  s += '\nFEATURES\n';
+  s += '──────────────────────────────\n';
+  var fks=['bottomTabs','themeEngine','darkModeCSSInjection','downloads','fileUploads','share','nativeActionCenter','pullToRefresh','offlineScreen','nativeBridge','settingsScreen','deepLinks','nativeSplash','debugLogs'];
+  var fls=['Bottom Tabs','Theme Engine','Dark CSS Injection','Downloads','File Uploads','Share','Action Center','Pull to Refresh','Offline Screen','Native Bridge','Native Settings','Deep Links','Native Splash','Debug Logs'];
+  for(var i=0;i<fks.length;i++){
+    s += fls[i]+': '+(c.features[fks[i]]?'On':'Off')+'\n';
+  }
+  s += '\nONBOARDING\n';
+  s += '──────────────────────────────\n';
+  s += 'Enabled:       '+(c.onboarding.enabled?'Yes':'No')+'\n';
+  s += 'Pages:         '+c.onboarding.pages.length+'\n';
+  s += 'Show Once:     '+(c.onboarding.showOnlyOnce?'Yes':'No')+'\n';
+  s += 'Every Launch:  '+(c.onboarding.showEveryLaunch?'Yes':'No')+'\n';
+  s += 'Allow Skip:    '+(c.onboarding.allowSkip?'Yes':'No')+'\n';
+  s += 'Push on Finish:'+(c.onboarding.requestPushOnFinish?'Yes':'No')+'\n';
+  s += '\nQR SCANNER\n';
+  s += '──────────────────────────────\n';
+  s += 'Enabled:       '+(c.qr.enabled?'Yes':'No')+'\n';
+  s += 'Internal URLs: '+(c.qr.openInternalInApp?'Open in app':'Show result only')+'\n';
+  s += 'External URLs: '+(c.qr.openExternalInSafari?'Open in Safari':'Show result only')+'\n';
+  s += 'Allowed Only:  '+(c.qr.allowedDomainsOnly?'Yes':'No')+'\n';
+  s += 'Confirm First: '+(c.qr.showResultBeforeOpening?'Yes':'No')+'\n';
+  s += 'Copy Text:     '+(c.qr.copyPlainTextResult?'Yes':'No')+'\n';
+  s += 'Camera Message:'+(c.qr.cameraPermissionMessage?' Set':' Missing')+'\n';
+  s += '\nTHEME\n';
+  s += '──────────────────────────────\n';
+  s += 'Primary Color: '+c.theme.primaryColor+'\n';
+  s += 'Mode:          '+c.theme.mode+'\n';
+  s += 'Dark CSS:      '+(c.theme.darkCss?'Custom CSS provided':'None')+'\n\n';
+  s += 'ADMOB\n';
+  s += '──────────────────────────────\n';
+  s += 'Enabled:    '+(c.admob.enabled?'Yes':'No')+'\n';
+  s += 'Banner:     '+(c.admob.banner?'On':'Off')+'\n';
+  s += 'Interstitial:'+(c.admob.interstitial?'On':'Off')+'\n';
+  s += 'Cooldown:   '+(parseInt(c.admob.interstitialCooldownSeconds,10)||45)+' seconds\n';
+  s += 'Excluded:   '+(c.admob.excludedPatterns.trim().replace(/\n/g,', ') || 'None')+'\n';
+  s += 'App ID:     '+(c.admob.appId||'(not set)')+'\n\n';
+  s += 'PUSH\n';
+  s += '──────────────────────────────\n';
+  s += 'Enabled:    '+(c.push.enabled?'Yes':'No')+'\n';
+  s += 'Firebase:   '+(c.push.firebaseEnabled?'On':'Off')+'\n';
+  s += 'Config:     '+(c.push.useGoogleServicePlist?'GoogleService-Info.plist':'Manual AppConfig values')+'\n\n';
+  s += '════════════════════════════════════════\n';
+  s += 'NEXT STEPS\n';
+  s += '════════════════════════════════════════\n\n';
+  s += '1. Copy CodixConfig.swift into your Xcode project\n';
+  if(c.admob.enabled) s += '2. Replace GADApplicationIdentifier in Info.plist with: '+(c.admob.appId||'your AdMob App ID')+'\n';
+  if(c.push.enabled) s += '3. Add Firebase SDK, GoogleService-Info.plist, and Push Notifications capability\n';
+  s += '4. Update App Store Connect listing\n';
+  s += '5. Build, test on device, submit for review\n';
+  return s;
+}
+
+/* ============================================================
+   SYNTAX HIGHLIGHTING
+   ============================================================ */
+function hlSwift(code){
+  var h = esc(code);
+  /* Comments */
+  h = h.replace(/(\/\/.*$)/gm,'<span class="cm">$1</span>');
+  /* Strings - simple */
+  h = h.replace(/("(?:[^"\\]|\\.)*")/g,'<span class="st">$1</span>');
+  /* Keywords */
+  h = h.replace(/\b(import|let|var|static|func|struct|enum|class|guard|switch|case|return|if|else|true|false|nil|self|typealias|protocol|extension|where|for|in)\b/g,'<span class="kw">$1</span>');
+  /* Types */
+  h = h.replace(/\b(String|Int|Bool|URL|Foundation|SwiftUI|Color|ColorScheme|AppConfig|CodixConfig|AppTab|AppTabType|CodixTabsConfig|AppThemeMode|CodixOnboardingPage)\b/g,'<span class="tp">$1</span>');
+  return h;
+}
+
+/* ============================================================
+   EVENT BINDING
+   ============================================================ */
+function bind(){
+  var root = document.getElementById('mBody');
+
+  /* data-path inputs */
+  var els = root.querySelectorAll('[data-path]');
+  for(var i=0;i<els.length;i++){
+    (function(el){
+      var path = el.getAttribute('data-path');
+      if(el.type==='checkbox'){
+        el.addEventListener('change',function(){
+          setVal(cfg,path,el.checked);
+          if(path==='website.enableOfflineScreen') cfg.features.offlineScreen = el.checked;
+          save();
+          onToggle(path);
+        });
+      }else if(el.tagName==='SELECT'){
+        el.addEventListener('change',function(){
+          var v = el.value;
+          if(v==='true') v=true;
+          else if(v==='false') v=false;
+          setVal(cfg,path,v);
+          save();
+        });
+      }else if(el.type==='color'){
+        el.addEventListener('input',function(){
+          setVal(cfg,path,el.value);
+          save();
+          syncColor(path,el.value);
+        });
+      }else{
+        el.addEventListener('input',function(){
+          setVal(cfg,path,el.value);
+          save();
+          if(path==='theme.primaryColor') syncColor(path,el.value);
+        });
+      }
+    })(els[i]);
+  }
+
+  /* Tab fields */
+  var tfs = root.querySelectorAll('[data-tf]');
+  for(var i=0;i<tfs.length;i++){
+    (function(el){
+      var field = el.getAttribute('data-tf');
+      var tid = parseInt(el.getAttribute('data-tid'));
+      if(el.tagName==='SELECT'){
+        el.addEventListener('change',function(){
+          var tab = findTab(tid);
+          if(tab){
+            tab[field] = el.value;
+            save();
+            var wrap = root.querySelector('[data-urlw="'+tid+'"]');
+            if(wrap) wrap.style.display = el.value==='web'?'flex':'none';
+          }
+        });
+      }else{
+        el.addEventListener('input',function(){
+          var tab = findTab(tid);
+          if(tab){tab[field]=el.value;save();}
+        });
+      }
+    })(tfs[i]);
+  }
+
+  /* Onboarding page fields */
+  var onbFields = root.querySelectorAll('[data-onbf]');
+  for(var i=0;i<onbFields.length;i++){
+    (function(el){
+      var field = el.getAttribute('data-onbf');
+      var pid = parseInt(el.getAttribute('data-onbid'));
+      if(field==='icon'){
+        el.addEventListener('focus',function(){activeOnboardingIconInput = el;});
+        el.addEventListener('click',function(){activeOnboardingIconInput = el;});
+      }
+      el.addEventListener('input',function(){
+        var page = findOnboardingPage(pid);
+        if(page){page[field]=el.value;save();}
+      });
+    })(onbFields[i]);
+  }
+
+  var symbolChips = root.querySelectorAll('[data-symbol-chip]');
+  for(var i=0;i<symbolChips.length;i++){
+    (function(btn){
+      btn.addEventListener('click',function(){
+        applyOnboardingSymbol(btn.getAttribute('data-symbol-chip'));
+      });
+    })(symbolChips[i]);
+  }
+
+  /* Sidebar nav clicks */
+  var sn = document.getElementById('sideNav');
+  var sbs = sn.querySelectorAll('[data-go]');
+  for(var i=0;i<sbs.length;i++){
+    (function(btn){
+      btn.addEventListener('click',function(){
+        go(parseInt(btn.getAttribute('data-go')));
+      });
+    })(sbs[i]);
+  }
+
+  /* Footer buttons */
+  document.getElementById('btnPrev').onclick = function(){go(curStep-1);};
+  document.getElementById('btnNext').onclick = function(){go(curStep+1);};
+
+  /* Reset button */
+  document.getElementById('btnReset').onclick = resetAll;
+
+  /* Mobile menu */
+  document.getElementById('btnMenu').onclick = toggleSide;
+  document.getElementById('ov').onclick = closeSide;
+
+  /* Tab management buttons */
+  var addBtn = document.getElementById('btnAddTab');
+  if(addBtn) addBtn.onclick = addTab;
+
+  var addOnbBtn = document.getElementById('btnAddOnboardingPage');
+  if(addOnbBtn) addOnbBtn.onclick = addOnboardingPage;
+
+  var moveBtns = root.querySelectorAll('[data-movet]');
+  for(var i=0;i<moveBtns.length;i++){
+    (function(btn){
+      btn.addEventListener('click',function(){
+        moveTab(parseInt(btn.getAttribute('data-movet')),parseInt(btn.getAttribute('data-dir')));
+      });
+    })(moveBtns[i]);
+  }
+
+  var delBtns = root.querySelectorAll('[data-delt]');
+  for(var i=0;i<delBtns.length;i++){
+    (function(btn){
+      btn.addEventListener('click',function(){
+        removeTab(parseInt(btn.getAttribute('data-delt')));
+      });
+    })(delBtns[i]);
+  }
+
+  var moveOnbBtns = root.querySelectorAll('[data-moveonb]');
+  for(var i=0;i<moveOnbBtns.length;i++){
+    (function(btn){
+      btn.addEventListener('click',function(){
+        moveOnboardingPage(parseInt(btn.getAttribute('data-moveonb')),parseInt(btn.getAttribute('data-dir')));
+      });
+    })(moveOnbBtns[i]);
+  }
+
+  var delOnbBtns = root.querySelectorAll('[data-delonb]');
+  for(var i=0;i<delOnbBtns.length;i++){
+    (function(btn){
+      btn.addEventListener('click',function(){
+        removeOnboardingPage(parseInt(btn.getAttribute('data-delonb')));
+      });
+    })(delOnbBtns[i]);
+  }
+
+  /* Generate section buttons */
+  var ftabs = document.querySelectorAll('.ftab');
+  for(var i=0;i<ftabs.length;i++){
+    (function(btn){
+      btn.addEventListener('click',function(){
+        showFile(parseInt(btn.getAttribute('data-fi')));
+      });
+    })(ftabs[i]);
+  }
+
+  var bc = document.getElementById('btnCopy');
+  if(bc) bc.onclick = copyCurFile;
+
+  var bd = document.getElementById('btnDl');
+  if(bd) bd.onclick = dlCurFile;
+
+  var bda = document.getElementById('btnDlAll');
+  if(bda) bda.onclick = dlAllFiles;
+
+  var bca = document.getElementById('btnCopyAll');
+  if(bca) bca.onclick = copyAllFiles;
+}
+
+function onToggle(path){
+  if(path==='admob.enabled'){
+    var f=document.getElementById('adFields');
+    if(f){f.style.opacity=cfg.admob.enabled?'1':'.4';f.style.pointerEvents=cfg.admob.enabled?'auto':'none';}
+  }
+  if(path==='push.enabled'){
+    var f=document.getElementById('pushFields');
+    if(f){f.style.opacity=cfg.push.enabled?'1':'.4';f.style.pointerEvents=cfg.push.enabled?'auto':'none';}
+  }
+  if(path.indexOf('features.')===0){
+    if(path==='features.offlineScreen') cfg.website.enableOfflineScreen = cfg.features.offlineScreen;
+    renderMain();
+  }
+}
+
+function syncColor(path,val){
+  if(path!=='theme.primaryColor') return;
+  var root = document.getElementById('mBody');
+  var sw = root.querySelector('.csw');
+  if(sw) sw.style.background = val;
+  var ci = root.querySelector('input[type="color"][data-path="theme.primaryColor"]');
+  if(ci) ci.value = val;
+  var ti = root.querySelector('input[type="text"][data-path="theme.primaryColor"],input:not([type="color"])[data-path="theme.primaryColor"]');
+  if(ti && ti.value!==val) ti.value = val;
+}
+
+/* ============================================================
+   TAB MANAGEMENT
+   ============================================================ */
+function findTab(id){
+  for(var i=0;i<cfg.tabs.length;i++){
+    if(cfg.tabs[i].id===id) return cfg.tabs[i];
+  }
+  return null;
+}
+
+function addTab(){
+  cfg.tabs.push({id:nextTid++,title:'New Tab',icon:'star.fill',type:'web',url:'/'});
+  save();
+  renderMain();
+  toast('Tab added','ok');
+}
+
+function removeTab(id){
+  if(cfg.tabs.length<=1){toast('At least one tab is required','er');return;}
+  cfg.tabs = cfg.tabs.filter(function(t){return t.id!==id;});
+  save();
+  renderMain();
+  toast('Tab removed','inf');
+}
+
+function moveTab(id,dir){
+  var idx=-1;
+  for(var i=0;i<cfg.tabs.length;i++){if(cfg.tabs[i].id===id){idx=i;break;}}
+  var ni=idx+dir;
+  if(ni<0||ni>=cfg.tabs.length) return;
+  var tmp=cfg.tabs[idx];
+  cfg.tabs[idx]=cfg.tabs[ni];
+  cfg.tabs[ni]=tmp;
+  save();
+  renderMain();
+}
+
+function findOnboardingPage(id){
+  for(var i=0;i<cfg.onboarding.pages.length;i++){
+    if(cfg.onboarding.pages[i].id===id) return cfg.onboarding.pages[i];
+  }
+  return null;
+}
+
+function addOnboardingPage(){
+  cfg.onboarding.pages.push({
+    id:nextOnboardingPageId++,
+    title:'New Page',
+    subtitle:'Describe one benefit in a short, friendly sentence.',
+    icon:'sparkles',
+    buttonTitle:''
+  });
+  save();
+  renderMain();
+  toast('Onboarding page added','ok');
+}
+
+function removeOnboardingPage(id){
+  cfg.onboarding.pages = cfg.onboarding.pages.filter(function(p){return p.id!==id;});
+  save();
+  renderMain();
+  toast('Onboarding page removed','inf');
+}
+
+function moveOnboardingPage(id,dir){
+  var idx=-1;
+  for(var i=0;i<cfg.onboarding.pages.length;i++){if(cfg.onboarding.pages[i].id===id){idx=i;break;}}
+  var ni=idx+dir;
+  if(ni<0||ni>=cfg.onboarding.pages.length) return;
+  var tmp=cfg.onboarding.pages[idx];
+  cfg.onboarding.pages[idx]=cfg.onboarding.pages[ni];
+  cfg.onboarding.pages[ni]=tmp;
+  save();
+  renderMain();
+}
+
+function applyOnboardingSymbol(symbol){
+  var root = document.getElementById('mBody');
+  var input = activeOnboardingIconInput;
+  if(!input || !root.contains(input)){
+    input = root.querySelector('[data-onbf="icon"]');
+  }
+  if(!input){
+    toast('Add an onboarding page first','er');
+    return;
+  }
+  input.value = symbol;
+  input.dispatchEvent(new Event('input',{bubbles:true}));
+  input.focus();
+  activeOnboardingIconInput = input;
+  toast('Icon set to '+symbol,'ok');
+}
+
+/* ============================================================
+   VALIDATION
+   ============================================================ */
+function validate(idx){
+  var errs=[];
+  var c=cfg;
+  switch(STEPS[idx].id){
+    case 'appInfo':
+      if(!c.appInfo.appName.trim()) errs.push('App name required');
+      if(!/^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*){2,}$/.test(c.appInfo.bundleId)) errs.push('Invalid bundle ID');
+      if(!/^\d+\.\d+\.\d+$/.test(c.appInfo.version)) errs.push('Invalid version');
+      if(!c.appInfo.supportEmail||!/\S+@\S+\.\S+/.test(c.appInfo.supportEmail)) errs.push('Invalid email');
+      break;
+    case 'website':
+      if(!c.website.mainUrl||!/^https?:\/\//.test(c.website.mainUrl)) errs.push('Invalid main URL');
+      break;
+    case 'tabs':
+      if(c.tabs.length===0) errs.push('Need at least one tab');
+      for(var i=0;i<c.tabs.length;i++){if(!c.tabs[i].title.trim()){errs.push('Tab missing title');break;}}
+      break;
+    case 'onboarding':
+      if(c.onboarding.enabled&&c.onboarding.pages.length===0) errs.push('Onboarding needs at least one page');
+      for(var i=0;i<c.onboarding.pages.length;i++){
+        if(!c.onboarding.pages[i].title.trim()){errs.push('Onboarding page missing title');break;}
+        if(!c.onboarding.pages[i].icon.trim()){errs.push('Onboarding page missing SF Symbol');break;}
+      }
+      break;
+    case 'qr':
+      if(c.qr.enabled&&!c.qr.cameraPermissionMessage.trim()) errs.push('QR scanner camera permission message required');
+      break;
+    case 'admob':
+      if(c.admob.enabled&&!c.admob.appId.trim()) errs.push('AdMob App ID required');
+      break;
+    case 'push':
+      if(c.push.enabled&&c.push.firebaseEnabled&&!c.push.useGoogleServicePlist){
+        if(!c.push.firebaseGoogleAppID.trim()) errs.push('Firebase Google App ID required');
+        if(!c.push.firebaseGCMSenderID.trim()) errs.push('Firebase GCM Sender ID required');
+      }
+      break;
+  }
+  return errs;
+}
+
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+function setVal(obj,path,val){
+  var keys=path.split('.');
+  var cur=obj;
+  for(var i=0;i<keys.length-1;i++){
+    if(!(keys[i] in cur)) cur[keys[i]]={};
+    cur=cur[keys[i]];
+  }
+  cur[keys[keys.length-1]]=val;
+}
+
+function esc(s){
+  if(typeof s!=='string') return '';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function opt(val,label,cur){
+  return '<option value="'+val+'"'+(String(cur)===String(val)?' selected':'')+'>'+label+'</option>';
+}
+
+function fmi(label,id,path,val,ph,hint,err,req,cls){
+  var c = 'fmi'+(cls?' '+cls:'');
+  var h = '<div class="'+c+'"><label class="fl">'+label;
+  if(req) h += ' <span class="rq">*</span>';
+  h += '</label>';
+  h += '<input class="fi" id="'+id+'" data-path="'+path+'" value="'+esc(val||'')+'" placeholder="'+(ph||'')+'">';
+  if(hint) h += '<span class="fh">'+hint+'</span>';
+  if(err) h += '<span class="ferr">'+err+'</span>';
+  h += '</div>';
+  return h;
+}
+
+function trow(title,desc,path,val){
+  return '<div class="trow"><div class="tinfo"><div class="tt">'+title+'</div><div class="td">'+desc+'</div></div>'+
+    '<label class="tgl"><input type="checkbox" data-path="'+path+'"'+(val?' checked':'')+'><span class="tgl-t"></span></label></div>';
+}
+
+function toggleRow2(label,path,val){
+  return '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px">'+
+    '<span style="font-size:.8rem;color:var(--tx2)">'+label+'</span>'+
+    '<label class="tgl"><input type="checkbox" data-path="'+path+'"'+(val?' checked':'')+'><span class="tgl-t"></span></label></div>';
+}
+
+function dateStr(){
+  var d=new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+
+function copyToClip(text){
+  if(navigator.clipboard){navigator.clipboard.writeText(text).catch(function(){fallbackCopy(text)});}
+  else{fallbackCopy(text);}
+}
+
+function fallbackCopy(text){
+  var ta=document.createElement('textarea');
+  ta.value=text;ta.style.cssText='position:fixed;left:-9999px';
+  document.body.appendChild(ta);ta.select();
+  try{document.execCommand('copy');}catch(e){}
+  document.body.removeChild(ta);
+}
+
+function dlFile(name,content){
+  var blob=new Blob([content],{type:'text/plain'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;a.download=name;
+  document.body.appendChild(a);a.click();
+  document.body.removeChild(a);URL.revokeObjectURL(url);
+}
+
+function copyCurFile(){
+  copyToClip(genFile(curFile));
+  toast(FILES[curFile].name+' copied','ok');
+}
+
+function dlCurFile(){
+  dlFile(FILES[curFile].name,genFile(curFile));
+}
+
+function dlAllFiles(){
+  for(var i=0;i<FILES.length;i++){
+    (function(idx){
+      setTimeout(function(){dlFile(FILES[idx].name,genFile(idx));},idx*250);
+    })(i);
+  }
+  toast('Downloading all files...','inf');
+}
+
+function copyAllFiles(){
+  var all='';
+  for(var i=0;i<FILES.length;i++){
+    all += '// ══════════════════════════════════════\n';
+    all += '// '+FILES[i].name+'\n';
+    all += '// ══════════════════════════════════════\n\n';
+    all += genFile(i);
+    all += '\n\n\n';
+  }
+  copyToClip(all);
+  toast('All files copied','ok');
+}
+
+function toast(msg,type){
+  var box=document.getElementById('tbox');
+  var t=document.createElement('div');
+  t.className='tst '+(type||'inf');
+  t.textContent=msg;
+  box.appendChild(t);
+  setTimeout(function(){
+    t.style.animation='tout .3s forwards';
+    setTimeout(function(){t.remove();},300);
+  },2500);
+}
+
+function toggleSide(){
+  document.getElementById('side').classList.toggle('open');
+  document.getElementById('ov').classList.toggle('show');
+}
+
+function closeSide(){
+  document.getElementById('side').classList.remove('open');
+  document.getElementById('ov').classList.remove('show');
+}
+
+/* ============================================================
+   INITIALIZATION
+   ============================================================ */
+load();
+renderSide();
+renderMain();
+updateFoot();
+
+/* Auto-save pulse */
+setInterval(function(){
+  var dot=document.querySelector('.save-dot');
+  if(dot){dot.style.boxShadow='0 0 6px rgba(34,197,94,.4)';setTimeout(function(){dot.style.boxShadow='none';},500);}
+},5000);
+</script>
+</body>
+</html>
