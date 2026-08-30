@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Account Deletion Request | ISKCON Bhuvaikuntha</title>
+
+  <meta
+    name="description"
+    content="Request deletion of your ISKCON Bhuvaikuntha account and eligible personal data."
+  />
+
+  <meta name="robots" content="index, follow" />
+
+  <style>
+    :root {
+      --bg: #fffaf0;
+      --surface: #ffffff;
+      --primary: #7b2d26;
+      --primary-dark: #5b1f1a;
+      --accent: #d4a017;
+      --text: #231f20;
+      --muted: #6f6a67;
+      --border: #eadfce;
+      --success-bg: #f1fbf4;
+      --success-border: #b9e3c3;
+      --warning-bg: #fff7e8;
+      --warning-border: #f0d49b;
+      --shadow: 0 12px 40px rgba(70, 42, 24, 0.1);
+      --radius: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(212, 160, 23, 0.08), transparent 30%),
+        linear-gradient(180deg, #fffdf8 0%, #fffaf0 100%);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .page {
+      width: min(100% - 28px, 920px);
+      margin: 0 auto;
+      padding: 28px 0 50px;
+    }
+
+    .hero {
+      background:
+        linear-gradient(135deg, rgba(123,45,38,0.97), rgba(91,31,26,0.97));
+      color: #fff;
+      border-radius: 28px;
+      padding: 32px 24px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      right: -80px;
+      top: -80px;
+      background: rgba(255,255,255,0.06);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 13px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.18);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      margin-bottom: 18px;
+    }
+
+    .brand-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #f2c94c;
+      color: #5b1f1a;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      font-size: 15px;
+    }
+
+    .hero h1 {
+      font-size: clamp(28px, 6vw, 46px);
+      line-height: 1.1;
+      margin-bottom: 14px;
+      max-width: 720px;
+    }
+
+    .hero p {
+      max-width: 700px;
+      color: rgba(255,255,255,0.88);
+      font-size: 16px;
+    }
+
+    .card {
+      margin-top: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: 0 8px 30px rgba(76, 48, 32, 0.06);
+    }
+
+    .card h2 {
+      font-size: 22px;
+      margin-bottom: 8px;
+      color: var(--primary-dark);
+    }
+
+    .card p {
+      color: var(--muted);
+    }
+
+    .notice {
+      margin-top: 16px;
+      padding: 15px 16px;
+      border-radius: 14px;
+      background: var(--warning-bg);
+      border: 1px solid var(--warning-border);
+      color: #624714;
+      font-size: 14px;
+    }
+
+    .success-note {
+      margin-top: 16px;
+      padding: 15px 16px;
+      border-radius: 14px;
+      background: var(--success-bg);
+      border: 1px solid var(--success-border);
+      color: #245c32;
+      font-size: 14px;
+    }
+
+    .steps {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .step {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      padding: 14px;
+      border-radius: 14px;
+      background: #fffaf5;
+      border: 1px solid #f0e4d6;
+    }
+
+    .step-number {
+      width: 34px;
+      height: 34px;
+      min-width: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    .step strong {
+      display: block;
+      margin-bottom: 2px;
+      color: var(--text);
+    }
+
+    form {
+      margin-top: 18px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 7px;
+      color: #3f3936;
+    }
+
+    .required {
+      color: #b3261e;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      border: 1px solid #d9cdbf;
+      background: #fff;
+      border-radius: 13px;
+      padding: 13px 14px;
+      font-size: 16px;
+      color: var(--text);
+      outline: none;
+      transition: 0.2s ease;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(212,160,23,0.12);
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .helper {
+      margin-top: 6px;
+      color: #857c76;
+      font-size: 12px;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin: 6px 0 20px;
+      padding: 13px;
+      border-radius: 12px;
+      background: #faf7f3;
+      border: 1px solid #eee3d7;
+    }
+
+    .checkbox-row input {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      accent-color: var(--primary);
+    }
+
+    .checkbox-row label {
+      font-weight: 500;
+      margin: 0;
+      font-size: 13px;
+    }
+
+    .btn {
+      border: 0;
+      cursor: pointer;
+      width: 100%;
+      padding: 15px 18px;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 800;
+      transition: 0.2s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff;
+      box-shadow: 0 10px 24px rgba(123,45,38,0.22);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .email-box {
+      margin-top: 15px;
+      padding: 14px 16px;
+      border-radius: 13px;
+      background: #f8f3ed;
+      border: 1px dashed #d9c6b2;
+      word-break: break-word;
+      font-size: 14px;
+    }
+
+    .email-box strong {
+      display: block;
+      margin-bottom: 3px;
+      color: var(--primary-dark);
+    }
+
+    .legal-list {
+      margin-top: 16px;
+      padding-left: 20px;
+      color: var(--muted);
+    }
+
+    .legal-list li {
+      margin-bottom: 8px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px 14px 10px;
+      color: #847a73;
+      font-size: 13px;
+    }
+
+    .footer-title {
+      color: var(--primary-dark);
+      font-weight: 800;
+      margin-bottom: 5px;
+    }
+
+    @media (max-width: 680px) {
+      .page {
+        width: min(100% - 18px, 920px);
+        padding-top: 10px;
+      }
+
+      .hero {
+        border-radius: 20px;
+        padding: 26px 18px;
+      }
+
+      .card {
+        padding: 18px;
+        border-radius: 17px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="page">
+
+    <section class="hero">
+      <div class="brand">
+        <div class="brand-icon">ॐ</div>
+        ISKCON BHUVAIKUNTHA
+      </div>
+
+      <h1>Account & Data Deletion Request</h1>
+
+      <p>
+        This page allows users of the ISKCON Bhuvaikuntha application to
+        request deletion of their account and eligible personal information.
+      </p>
+    </section>
+
+
+    <section class="card">
+      <h2>How account deletion works</h2>
+
+      <p>
+        To protect your account from unauthorized deletion, ISKCON may verify
+        that the request belongs to the registered user before processing it.
+      </p>
+
+      <div class="steps">
+
+        <div class="step">
+          <div class="step-number">1</div>
+          <div>
+            <strong>Enter your details</strong>
+            Provide your name and the mobile number registered with your
+            ISKCON Bhuvaikuntha account.
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">2</div>
+          <div>
+            <strong>Send the deletion request</strong>
+            Tap the button below. Your email application will open with a
+            prepared account deletion request.
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">3</div>
+          <div>
+            <strong>Verification</strong>
+            ISKCON may contact you or request reasonable verification to
+            confirm that you are the account holder.
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-number">4</div>
+          <div>
+            <strong>Deletion</strong>
+            After verification, eligible account information will be deleted
+            or anonymized in accordance with applicable legal and regulatory
+            requirements.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <section class="card">
+
+      <h2>Submit deletion request</h2>
+
+      <p>
+        Please enter the information associated with your ISKCON Bhuvaikuntha
+        account.
+      </p>
+
+      <form id="deleteForm">
+
+        <div class="grid">
+
+          <div class="field">
+            <label for="name">
+              Full Name <span class="required">*</span>
+            </label>
+
+            <input
+              id="name"
+              type="text"
+              placeholder="Enter your full name"
+              autocomplete="name"
+              required
+            />
+          </div>
+
+
+          <div class="field">
+            <label for="mobile">
+              Registered Mobile Number <span class="required">*</span>
+            </label>
+
+            <input
+              id="mobile"
+              type="tel"
+              inputmode="tel"
+              placeholder="+91 9876543210"
+              autocomplete="tel"
+              required
+            />
+
+            <div class="helper">
+              Enter the mobile number used to sign in to the application.
+            </div>
+          </div>
+
+        </div>
+
+
+        <div class="field">
+
+          <label for="email">
+            Email Address
+          </label>
+
+          <input
+            id="email"
+            type="email"
+            placeholder="Optional"
+            autocomplete="email"
+          />
+
+        </div>
+
+
+        <div class="field">
+
+          <label for="message">
+            Additional Information
+          </label>
+
+          <textarea
+            id="message"
+            placeholder="You may provide additional details about your request."
+          ></textarea>
+
+        </div>
+
+
+        <div class="checkbox-row">
+
+          <input id="confirm" type="checkbox" required />
+
+          <label for="confirm">
+            I understand that requesting account deletion may permanently
+            remove my ISKCON Bhuvaikuntha account and eligible associated
+            personal information. Certain donation, transaction, tax,
+            accounting, audit, security, or legally required records may be
+            retained where necessary.
+          </label>
+
+        </div>
+
+
+        <button class="btn btn-primary" type="submit">
+          Send Account Deletion Request
+        </button>
+
+      </form>
+
+
+      <div class="email-box">
+
+        <strong>Official Privacy / Support Email</strong>
+
+        iskconpandharpur@pamho.net
+
+      </div>
+
+
+      <div class="success-note">
+        This webpage itself does not automatically delete your account.
+        It allows you to initiate a deletion request directly with ISKCON.
+      </div>
+
+    </section>
+
+
+    <section class="card">
+
+      <h2>What information may be deleted?</h2>
+
+      <p>
+        After verification and subject to applicable requirements, eligible
+        information associated with your account may include:
+      </p>
+
+      <ul class="legal-list">
+        <li>Account/profile information</li>
+        <li>Name and contact information associated only with the account</li>
+        <li>Profile photograph</li>
+        <li>Optional profile information</li>
+        <li>Eligible application account records</li>
+        <li>Other personal information that is no longer required</li>
+      </ul>
+
+    </section>
+
+
+    <section class="card">
+
+      <h2>Information that may need to be retained</h2>
+
+      <p>
+        Certain information may need to be retained even after account
+        deletion where required or permitted for legal, tax, accounting,
+        regulatory, audit, security, fraud-prevention, or dispute-resolution
+        purposes.
+      </p>
+
+      <ul class="legal-list">
+        <li>Donation records</li>
+        <li>Transaction and payment reference records</li>
+        <li>Donation receipts</li>
+        <li>Applicable 80G / Form 10BE records</li>
+        <li>PAN-related records where legally required</li>
+        <li>Accounting and audit records</li>
+        <li>Fraud-prevention and security records where necessary</li>
+      </ul>
+
+      <div class="notice">
+        Retained information will only be kept for legitimate legal,
+        accounting, regulatory, security, or related purposes and should not
+        be used to continue an active application account.
+      </div>
+
+    </section>
+
+
+    <section class="card">
+
+      <h2>Need help?</h2>
+
+      <p>
+        If you are unable to submit a request using the button above, you may
+        contact us directly using the email address below.
+      </p>
+
+      <div class="email-box">
+
+        <strong>Email</strong>
+
+        iskconpandharpur@pamho.net
+
+      </div>
+
+      <div class="email-box">
+
+        <strong>Application</strong>
+
+        ISKCON Bhuvaikuntha
+
+      </div>
+
+      <div class="email-box">
+
+        <strong>Organization</strong>
+
+        International Society for Krishna Consciousness (ISKCON)<br />
+        Hare Krishna Dham<br />
+        28A, Gata No. 107 and 108<br />
+        Sri Sri Radha Pandharinath Mandir<br />
+        Near Chandrabhaga River<br />
+        Pandharpur, Solapur<br />
+        Maharashtra – 413304<br />
+        India
+
+      </div>
+
+    </section>
+
+
+    <footer>
+
+      <div class="footer-title">
+        ISKCON Bhuvaikuntha
+      </div>
+
+      Account & Data Deletion Request
+
+      <br />
+
+      © <span id="year"></span>
+      International Society for Krishna Consciousness
+
+    </footer>
+
+  </main>
+
+
+  <script>
+
+    const OFFICIAL_EMAIL = "iskconpandharpur@pamho.net";
+
+    const form = document.getElementById("deleteForm");
+
+    form.addEventListener("submit", function(event) {
+
+      event.preventDefault();
+
+      const name =
+        document.getElementById("name").value.trim();
+
+      const mobile =
+        document.getElementById("mobile").value.trim();
+
+      const email =
+        document.getElementById("email").value.trim();
+
+      const message =
+        document.getElementById("message").value.trim();
+
+      const confirmed =
+        document.getElementById("confirm").checked;
+
+
+      if (!name || !mobile) {
+
+        alert(
+          "Please enter your full name and registered mobile number."
+        );
+
+        return;
+      }
+
+
+      if (!confirmed) {
+
+        alert(
+          "Please confirm that you understand the account deletion request."
+        );
+
+        return;
+      }
+
+
+      const subject =
+        "ISKCON Bhuvaikuntha - Account Deletion Request";
+
+
+      const body = `
+Hare Krishna,
+
+I would like to request deletion of my ISKCON Bhuvaikuntha account and eligible associated personal information.
+
+Account Details:
+
+Full Name:
+${name}
+
+Registered Mobile Number:
+${mobile}
+
+Email Address:
+${email || "Not provided"}
+
+Additional Information:
+${message || "None"}
+
+I understand that certain donation, transaction, tax, accounting, audit, regulatory, security, or legally required records may need to be retained even after my application account is deleted.
+
+Please verify my request and process the account deletion in accordance with the applicable privacy policy and legal requirements.
+
+Hare Krishna.
+      `.trim();
+
+
+      const mailto =
+        `mailto:${OFFICIAL_EMAIL}` +
+        `?subject=${encodeURIComponent(subject)}` +
+        `&body=${encodeURIComponent(body)}`;
+
+
+      window.location.href = mailto;
+
+    });
+
+
+    document.getElementById("year").textContent =
+      new Date().getFullYear();
+
+  </script>
+
+</body>
+</html>
